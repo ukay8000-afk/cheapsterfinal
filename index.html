@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cheapster.in — Every Store. One Place.</title>
+<meta name="description" content="Cheapster.in is a directory of India's top online stores. Find and shop your favourite brands in one place.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ===== SKIP LINK ===== -->
+<a href="#main" class="skip-link">Skip to content</a>
+
+<!-- ===== HEADER ===== -->
+<header class="site-header" id="siteHeader">
+  <div class="header-inner">
+    <a href="#" class="logo" aria-label="Cheapster.in home">
+      <span class="logo-mark">C.</span>
+      <span class="logo-word">Cheapster<span class="logo-dot">.in</span></span>
+    </a>
+
+    <div class="header-actions">
+      <button class="btn btn-giveaway" id="giveawayTriggerHeader" type="button">
+        <span class="giveaway-emoji" aria-hidden="true">🎁</span>
+        <span class="giveaway-label">Claim Giveaway</span>
+      </button>
+
+      <!-- Logged-out state -->
+      <button class="btn btn-google" id="googleLoginBtn" type="button">
+        <svg class="google-icon" viewBox="0 0 18 18" aria-hidden="true">
+          <path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.9c1.7-1.57 2.7-3.88 2.7-6.62z"/>
+          <path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.9-2.26c-.8.54-1.84.86-3.06.86-2.35 0-4.34-1.59-5.05-3.72H.96v2.33A9 9 0 0 0 9 18z"/>
+          <path fill="#FBBC05" d="M3.95 10.7A5.4 5.4 0 0 1 3.67 9c0-.59.1-1.17.28-1.7V4.97H.96A9 9 0 0 0 0 9c0 1.45.35 2.83.96 4.03l2.99-2.33z"/>
+          <path fill="#EA4335" d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0A9 9 0 0 0 .96 4.97l2.99 2.33C4.66 5.17 6.65 3.58 9 3.58z"/>
+        </svg>
+        <span>Login with Google</span>
+      </button>
+
+      <!-- Logged-in state (hidden by default) -->
+      <div class="profile-menu hidden" id="profileMenu">
+        <button class="profile-trigger" id="profileTrigger" type="button" aria-haspopup="true" aria-expanded="false">
+          <span class="profile-avatar" id="profileAvatar">?</span>
+          <span class="profile-name" id="profileName">Guest</span>
+          <svg class="chev" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
+        </button>
+        <div class="profile-dropdown" id="profileDropdown">
+          <button class="profile-dropdown-item" id="logoutBtn" type="button">Log out</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+
+  <!-- ===== HERO ===== -->
+  <section class="hero">
+    <div class="hero-inner">
+      <p class="hero-eyebrow">45+ stores, one address</p>
+      <h1 class="hero-title">Shop the whole Indian internet from a single tab.</h1>
+      <div class="search-wrap">
+        <svg class="search-icon" viewBox="0 0 20 20" aria-hidden="true">
+          <circle cx="8.5" cy="8.5" r="6" stroke="currentColor" stroke-width="1.6" fill="none"/>
+          <line x1="13.2" y1="13.2" x2="18" y2="18" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+        <input type="text" id="storeSearch" class="search-input" placeholder="Search brands (e.g., Myntra, Amazon)..." autocomplete="off">
+      </div>
+      <p class="search-count" id="searchCount" aria-live="polite"></p>
+    </div>
+  </section>
+
+  <!-- ===== STORE GRID ===== -->
+  <section class="store-section">
+    <div class="store-grid" id="storeGrid"><!-- injected by script.js --></div>
+    <p class="no-results hidden" id="noResults">No stores match "<span id="noResultsTerm"></span>". Try another brand name.</p>
+  </section>
+
+  <!-- ===== RUNNING OFFERS (footer-linked section) ===== -->
+  <section class="offers-section" id="offers">
+    <div class="offers-card">
+      <div class="offers-text">
+        <p class="offers-eyebrow">Running now</p>
+        <h2 class="offers-title">Cheapster Diwali Mega Giveaway</h2>
+        <p class="offers-copy">Every purchase you make through a Cheapster store link is a free entry into our Diwali lucky draw — no extra steps needed beyond claiming your entry below.</p>
+      </div>
+      <button class="btn btn-giveaway btn-large" id="giveawayTriggerOffers" type="button">Claim Now</button>
+    </div>
+  </section>
+
+</main>
+
+<!-- ===== FOOTER ===== -->
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <span class="logo-mark">C.</span>
+      <span class="logo-word">Cheapster<span class="logo-dot">.in</span></span>
+      <p class="footer-tagline">India's shortcut to every store that matters.</p>
+    </div>
+
+    <nav class="footer-links" aria-label="Footer">
+      <button class="footer-link" data-modal="modal-about" type="button">About Us</button>
+      <button class="footer-link" data-modal="modal-offers" type="button">Running Offers</button>
+      <button class="footer-link" data-modal="modal-payout" type="button">Payout Policy</button>
+      <button class="footer-link" data-modal="modal-terms" type="button">Terms of Use</button>
+      <button class="footer-link" data-modal="modal-privacy" type="button">Privacy Policy</button>
+      <a class="footer-link" href="https://wa.me/91XXXXXXXXXX?text=Hi%20Cheapster%20Support%2C%20I%20need%20help%20with" target="_blank" rel="noopener">Contact Us</a>
+    </nav>
+  </div>
+  <p class="footer-copyright">© 2026 Cheapster.in. All brand names and logos belong to their respective owners.</p>
+</footer>
+
+<!-- ===== WELCOME MODAL (first visit) ===== -->
+<div class="modal-overlay hidden" id="welcomeModal" role="dialog" aria-modal="true" aria-labelledby="welcomeTitle">
+  <div class="modal modal-hero">
+    <button class="modal-close" data-close-modal="welcomeModal" aria-label="Close">&times;</button>
+    <p class="modal-eyebrow">Diwali Dhamaka</p>
+    <h2 class="modal-title" id="welcomeTitle">Every store you shop, in one glowing list.</h2>
+    <p class="modal-body">Browse 45+ Indian stores, jump straight to your favourite brand, and enter our Diwali giveaway while you're at it.</p>
+    <button class="btn btn-gold" data-close-modal="welcomeModal" type="button">Start browsing</button>
+  </div>
+</div>
+
+<!-- ===== GIVEAWAY FORM MODAL ===== -->
+<div class="modal-overlay hidden" id="giveawayModal" role="dialog" aria-modal="true" aria-labelledby="giveawayTitle">
+  <div class="modal modal-form">
+    <button class="modal-close" data-close-modal="giveawayModal" aria-label="Close">&times;</button>
+
+    <h2 class="modal-title" id="giveawayTitle">Cheapster Diwali Mega Giveaway! 🎉</h2>
+    <p class="modal-body">Shop through our links to enter the lucky draw! Winners will be announced live on Instagram (@XXXX) on the announced Diwali draw date.</p>
+
+    <div class="callout">
+      <strong>Note:</strong> While winners are announced on time, the actual prize payout will be transferred to the winner's account ONLY after the official return window for their specific winning order has successfully closed. This ensures 100% genuine entries and prevents cancellation fraud.
+    </div>
+
+    <!-- Auth guard notice, shown when a guest tries to submit -->
+    <div class="auth-guard hidden" id="authGuardNotice">
+      <p>Please log in with Google to submit your entry.</p>
+      <button class="btn btn-google" id="authGuardLoginBtn" type="button">
+        <svg class="google-icon" viewBox="0 0 18 18" aria-hidden="true">
+          <path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.9c1.7-1.57 2.7-3.88 2.7-6.62z"/>
+          <path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.9-2.26c-.8.54-1.84.86-3.06.86-2.35 0-4.34-1.59-5.05-3.72H.96v2.33A9 9 0 0 0 9 18z"/>
+          <path fill="#FBBC05" d="M3.95 10.7A5.4 5.4 0 0 1 3.67 9c0-.59.1-1.17.28-1.7V4.97H.96A9 9 0 0 0 0 9c0 1.45.35 2.83.96 4.03l2.99-2.33z"/>
+          <path fill="#EA4335" d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0A9 9 0 0 0 .96 4.97l2.99 2.33C4.66 5.17 6.65 3.58 9 3.58z"/>
+        </svg>
+        <span>Login with Google</span>
+      </button>
+    </div>
+
+    <!-- The actual entry form: UI only, no submission logic wired up -->
+    <form class="giveaway-form hidden" id="giveawayForm" novalidate>
+      <label class="field">
+        <span class="field-label">Full Name</span>
+        <input type="text" name="fullName" id="fullName" placeholder="Your full name" required>
+        <span class="field-error" id="err-fullName"></span>
+      </label>
+
+      <label class="field">
+        <span class="field-label">WhatsApp Number</span>
+        <input type="tel" name="whatsapp" id="whatsapp" placeholder="10-digit mobile number" inputmode="numeric" pattern="[0-9]{10}" maxlength="10" required>
+        <span class="field-error" id="err-whatsapp"></span>
+      </label>
+
+      <label class="field">
+        <span class="field-label">Store Order ID</span>
+        <input type="text" name="orderId" id="orderId" placeholder="e.g., 407-XXXXXXX-XXXXXXX" required>
+        <span class="field-error" id="err-orderId"></span>
+      </label>
+
+      <label class="field">
+        <span class="field-label">Brand</span>
+        <select name="brand" id="brandSelect" required>
+          <option value="" disabled selected>Select the brand you ordered from</option>
+          <!-- options injected by script.js from the store list -->
+        </select>
+        <span class="field-error" id="err-brand"></span>
+      </label>
+
+      <button class="btn btn-gold btn-full" id="submitEntryBtn" type="submit">Submit Valid Entry</button>
+
+      <p class="form-disclaimer">Disclaimer: Sponsored solely by Cheapster.in. Not endorsed by or affiliated with Amazon, Flipkart, or listed brands. Cancelled or returned orders are automatically disqualified from the draw.</p>
+    </form>
+  </div>
+</div>
+
+<!-- ===== SUCCESS MODAL (UI shell only — no submission logic wired to it yet) ===== -->
+<div class="modal-overlay hidden" id="successModal" role="dialog" aria-modal="true" aria-labelledby="successTitle">
+  <div class="modal modal-success">
+    <button class="modal-close" data-close-modal="successModal" aria-label="Close">&times;</button>
+    <div class="success-icon" aria-hidden="true">✓</div>
+    <h2 class="modal-title" id="successTitle">Entry received</h2>
+    <p class="modal-body">You're in the draw. We'll message your WhatsApp number if you win.</p>
+    <button class="btn btn-gold" data-close-modal="successModal" type="button">Done</button>
+  </div>
+</div>
+
+<!-- ===== LEGAL / INFO MODALS ===== -->
+<div class="modal-overlay hidden" id="modal-about" role="dialog" aria-modal="true" aria-labelledby="aboutTitle">
+  <div class="modal modal-text">
+    <button class="modal-close" data-close-modal="modal-about" aria-label="Close">&times;</button>
+    <h2 class="modal-title" id="aboutTitle">About Us</h2>
+    <p class="modal-body">Cheapster.in exists to save you the time of hunting for every store's website separately. We built a single, fast directory of India's most-shopped brands — Amazon to Zivame — so you can jump straight to the store you want without wading through search results. We don't list prices or run our own discounts; we simply point you to the right front door, faster.</p>
+  </div>
+</div>
+
+<div class="modal-overlay hidden" id="modal-offers" role="dialog" aria-modal="true" aria-labelledby="offersTitle">
+  <div class="modal modal-text">
+    <button class="modal-close" data-close-modal="modal-offers" aria-label="Close">&times;</button>
+    <h2 class="modal-title" id="offersTitle">Running Offers</h2>
+    <p class="modal-body">Our current promotion is the <strong>Cheapster Diwali Mega Giveaway</strong>. Shop through any store link on this site, then submit your order details before the draw date to be entered. Winners are announced live on our Instagram account. Full payout terms are listed in our Payout Policy below.</p>
+    <button class="btn btn-gold" id="offersClaimNow" type="button">Claim Now</button>
+  </div>
+</div>
+
+<div class="modal-overlay hidden" id="modal-payout" role="dialog" aria-modal="true" aria-labelledby="payoutTitle">
+  <div class="modal modal-text">
+    <button class="modal-close" data-close-modal="modal-payout" aria-label="Close">&times;</button>
+    <h2 class="modal-title" id="payoutTitle">Payout Policy</h2>
+    <p class="modal-body">Winners are announced on the date advertised for each draw. The prize payout itself is transferred only after the relevant store's official return window (typically 15–30 days, depending on the store and product category) has closed on the winning order. This wait applies equally to every winner and exists solely to confirm the order was not cancelled or returned before funds are released. We will keep you updated by WhatsApp throughout this period.</p>
+  </div>
+</div>
+
+<div class="modal-overlay hidden" id="modal-terms" role="dialog" aria-modal="true" aria-labelledby="termsTitle">
+  <div class="modal modal-text">
+    <button class="modal-close" data-close-modal="modal-terms" aria-label="Close">&times;</button>
+    <h2 class="modal-title" id="termsTitle">Terms of Use</h2>
+    <p class="modal-body">By using Cheapster.in you agree to use the site for personal, non-commercial browsing only. Store links take you to third-party websites we do not control or operate; any purchase you make is a contract between you and that store, not with Cheapster.in. We reserve the right to update these terms, our store listings, and our promotional rules at any time. Continued use of the site after changes means you accept the updated terms.</p>
+  </div>
+</div>
+
+<div class="modal-overlay hidden" id="modal-privacy" role="dialog" aria-modal="true" aria-labelledby="privacyTitle">
+  <div class="modal modal-text">
+    <button class="modal-close" data-close-modal="modal-privacy" aria-label="Close">&times;</button>
+    <h2 class="modal-title" id="privacyTitle">Privacy Policy</h2>
+    <p class="modal-body">We collect only what you give us directly: your Google account name/email when you log in, and the name, WhatsApp number, order ID, and brand you submit for a giveaway entry. This information is used solely to run the giveaway, verify entries, and contact winners. We do not sell your data to third parties. You can request deletion of your data at any time via our WhatsApp contact below.</p>
+  </div>
+</div>
+
+<script type="module" src="script.js"></script>
+</body>
+</html>
