@@ -1,389 +1,1013 @@
 /* =========================================================
-   Cheapster.in — script.js
-   Vanilla JS. No frameworks.
+   CHEAPSTER.IN
+   Vanilla JS + Firebase v9/v10 Modular SDK
+========================================================= */
 
-   NOTE ON SCOPE:
-   - Firebase Auth below uses PLACEHOLDER config keys (XXXX) and
-     is NOT wired to a real Firebase project.
-   - The giveaway form has full client-side UI + validation, but
-     deliberately has NO fetch()/webhook call. Wire your own
-     compliant backend/submission logic where marked below.
-   ========================================================= */
+import {
+  initializeApp
+} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 
-/* ---------------------------------------------------------
-   1. STORE DATA
-   `logoUrl` uses Clearbit's public logo lookup (logo.clearbit.com/<domain>),
-   a common way to render a brand's real, publicly-displayed logo
-   without hosting the image file yourself. `websiteUrl` is each
-   brand's normal, public homepage — NOT an affiliate link.
---------------------------------------------------------- */
-const STORES = [
-  // E-commerce & retail giants
-  { name: "Flipkart", domain: "flipkart.com" },
-  { name: "Amazon India", domain: "amazon.in" },
-  { name: "Myntra", domain: "myntra.com" },
-  { name: "Ajio", domain: "ajio.com" },
-  { name: "Tata CLiQ", domain: "tatacliq.com" },
-  { name: "Nykaa", domain: "nykaa.com" },
-  { name: "Meesho", domain: "meesho.com" },
-  { name: "AliExpress", domain: "aliexpress.com" },
+import {
+  getAuth,
+  GoogleAuthProvider,
+  signInWithPopup,
+  onAuthStateChanged,
+  signOut
+} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
 
-  // Electronics & gadgets
-  { name: "Croma", domain: "croma.com" },
-  { name: "Samsung India", domain: "samsung.com" },
-  { name: "OnePlus", domain: "oneplus.in" },
-  { name: "Dell India", domain: "dell.com" },
-  { name: "Lenovo", domain: "lenovo.com" },
-  { name: "boAt Lifestyle", domain: "boat-lifestyle.com" },
+/* =========================================================
+   CONFIGURATION
+========================================================= */
 
-  // Travel & booking
-  { name: "MakeMyTrip", domain: "makemytrip.com" },
-  { name: "Goibibo", domain: "goibibo.com" },
-  { name: "Agoda", domain: "agoda.com" },
-  { name: "Cleartrip", domain: "cleartrip.com" },
-  { name: "Skyscanner", domain: "skyscanner.co.in" },
-  { name: "Busbud", domain: "busbud.com" },
+/*
+  Replace these Firebase placeholders with your real Firebase
+  Web App configuration.
 
-  // Food, grocery & daily essentials
-  { name: "Blinkit", domain: "blinkit.com" },
-  { name: "Swiggy", domain: "swiggy.com" },
-  { name: "Zomato", domain: "zomato.com" },
-  { name: "BigBasket", domain: "bigbasket.com" },
-  { name: "Instacart", domain: "instacart.com" },
-
-  // Finance, hosting & services
-  { name: "Hostinger", domain: "hostinger.in" },
-  { name: "Bluehost", domain: "bluehost.in" },
-  { name: "GoDaddy", domain: "godaddy.com" },
-  { name: "BankBazaar", domain: "bankbazaar.com" },
-  { name: "Upstox", domain: "upstox.com" },
-  { name: "Norton", domain: "norton.com" },
-  { name: "Kaspersky", domain: "kaspersky.co.in" },
-
-  // Jewellery, eyewear & beauty (leading Cuelinks beauty affiliates)
-  { name: "Lenskart", domain: "lenskart.com" },
-  { name: "Tanishq", domain: "tanishq.co.in" },
-  { name: "Purplle", domain: "purplle.com" },
-  { name: "SUGAR Cosmetics", domain: "sugarcosmetics.com" },
-  { name: "MyGlamm", domain: "myglamm.com" },
-  { name: "Lakme", domain: "lakmeindia.com" },
-  { name: "Colorbar", domain: "colorbar.com" },
-  { name: "Plum Goodness", domain: "plumgoodness.com" },
-  { name: "Mamaearth", domain: "mamaearth.in" },
-].map(store => ({
-  storeName: store.name,
-  logoUrl: `https://logo.clearbit.com/${store.domain}`,
-  // Normal public homepage — placeholder swap point if you later
-  // move to real affiliate deep links.
-  affiliateLink: `https://www.${store.domain}`,
-}));
-
-/* ---------------------------------------------------------
-   2. FIREBASE CONFIG (placeholder — fill with your real project)
---------------------------------------------------------- */
-const firebaseConfig = {
-  apiKey: "XXXX",
-  authDomain: "XXXX",
-  projectId: "XXXX",
-  storageBucket: "XXXX",
-  messagingSenderId: "XXXX",
-  appId: "XXXX",
+  Firebase Console:
+  Project Settings
+  -> Your apps
+  -> Web app
+*/
+const FIREBASE_CONFIG = {
+  apiKey: "YOUR_FIREBASE_API_KEY",
+  authDomain: "YOUR_FIREBASE_PROJECT.firebaseapp.com",
+  projectId: "YOUR_FIREBASE_PROJECT_ID",
+  storageBucket: "YOUR_FIREBASE_PROJECT.firebasestorage.app",
+  messagingSenderId: "YOUR_FIREBASE_MESSAGING_SENDER_ID",
+  appId: "YOUR_FIREBASE_APP_ID"
 };
 
-// Firebase Web SDK v10 (modular), loaded only when needed.
+/*
+  Replace this with your real webhook endpoint.
+
+  The browser will POST JSON here when a logged-in user
+  submits the giveaway form.
+*/
+const WEBHOOK_URL = "YOUR_WEBHOOK_URL";
+
+/*
+  WhatsApp support number specified in the brief.
+  International format, WITHOUT + or spaces.
+*/
+const WHATSAPP_SUPPORT_NUMBER = "919999999999";
+
+/*
+  One-time welcome popup key.
+
+  IMPORTANT:
+  - localStorage is used.
+  - No focus event.
+  - No visibilitychange event.
+  - No recurring timer.
+*/
+const WELCOME_STORAGE_KEY = "cheapster_welcome_seen_v1";
+
+/* =========================================================
+   STORE DATA
+========================================================= */
+
+const STORES = [
+  {
+    name: "Amazon",
+    logo: "https://logo.clearbit.com/amazon.in",
+    affiliateUrl: "#"
+  },
+  {
+    name: "Flipkart",
+    logo: "https://logo.clearbit.com/flipkart.com",
+    affiliateUrl: "#"
+  },
+  {
+    name: "Myntra",
+    logo: "https://logo.clearbit.com/myntra.com",
+    affiliateUrl: "#"
+  },
+  {
+    name: "AJIO",
+    logo: "https://logo.clearbit.com/ajio.com",
+    affiliateUrl: "#"
+  },
+  {
+    name: "Nykaa",
+    logo: "https://logo.clearbit.com/nykaa.com",
+    affiliateUrl: "#"
+  }
+];
+
+/* =========================================================
+   FIREBASE INITIALIZATION
+========================================================= */
+
 let firebaseApp = null;
-let firebaseAuth = null;
+let auth = null;
+let googleProvider = null;
+
+const firebaseConfigured =
+  FIREBASE_CONFIG.apiKey &&
+  !FIREBASE_CONFIG.apiKey.startsWith("YOUR_") &&
+  FIREBASE_CONFIG.projectId &&
+  !FIREBASE_CONFIG.projectId.startsWith("YOUR_");
+
+if (firebaseConfigured) {
+  try {
+    firebaseApp = initializeApp(FIREBASE_CONFIG);
+    auth = getAuth(firebaseApp);
+    googleProvider = new GoogleAuthProvider();
+
+    googleProvider.setCustomParameters({
+      prompt: "select_account"
+    });
+  } catch (error) {
+    console.error("Firebase initialization failed:", error);
+  }
+} else {
+  console.warn(
+    "Firebase is not configured yet. Add your real Firebase Web App keys to script.js."
+  );
+}
+
+/* =========================================================
+   DOM REFERENCES
+========================================================= */
+
+const storeGrid = document.getElementById("storeGrid");
+const emptyState = document.getElementById("emptyState");
+const storeCount = document.getElementById("storeCount");
+const searchInput = document.getElementById("storeSearch");
+const clearSearchButton = document.getElementById("clearSearch");
+
+const welcomeModal = document.getElementById("welcomeModal");
+const giveawayModal = document.getElementById("giveawayModal");
+const authNotice = document.getElementById("authNotice");
+
+const headerGiveawayBtn =
+  document.getElementById("headerGiveawayBtn");
+
+const welcomeClaimBtn =
+  document.getElementById("welcomeClaimBtn");
+
+const googleLoginBtn =
+  document.getElementById("googleLoginBtn");
+
+const googleLoginText =
+  document.getElementById("googleLoginText");
+
+const giveawayForm =
+  document.getElementById("giveawayForm");
+
+const giveawaySuccess =
+  document.getElementById("giveawaySuccess");
+
+const submitEntryBtn =
+  document.getElementById("submitEntryBtn");
+
+const contactForm =
+  document.getElementById("contactForm");
+
+const currentYear =
+  document.getElementById("currentYear");
+
 let currentUser = null;
 
-async function initFirebase() {
-  if (firebaseApp) return;
-  const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js");
-  const { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } =
-    await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js");
+/* =========================================================
+   UTILITIES
+========================================================= */
 
-  firebaseApp = initializeApp(firebaseConfig);
-  firebaseAuth = getAuth(firebaseApp);
+function escapeHtml(value) {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
 
-  onAuthStateChanged(firebaseAuth, (user) => {
-    currentUser = user;
-    renderAuthState();
+function getInitials(name) {
+  return name
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part.charAt(0))
+    .join("")
+    .toUpperCase();
+}
+
+function setLoading(button, loading, defaultText = "Submit Entry") {
+  const label = button.querySelector(".button-label");
+  const loader = button.querySelector(".button-loader");
+
+  button.disabled = loading;
+
+  if (label) {
+    label.textContent = loading
+      ? "Submitting..."
+      : defaultText;
+  }
+
+  if (loader) {
+    loader.hidden = !loading;
+  }
+}
+
+function getElement(id) {
+  return document.getElementById(id);
+}
+
+function clearFieldError(inputId, errorId) {
+  const input = getElement(inputId);
+  const error = getElement(errorId);
+
+  if (input) {
+    input.closest(".form-group")?.classList.remove("has-error");
+  }
+
+  if (error) {
+    error.textContent = "";
+  }
+}
+
+function showFieldError(inputId, errorId, message) {
+  const input = getElement(inputId);
+  const error = getElement(errorId);
+
+  if (input) {
+    input.closest(".form-group")?.classList.add("has-error");
+  }
+
+  if (error) {
+    error.textContent = message;
+  }
+}
+
+/* =========================================================
+   MODAL SYSTEM
+========================================================= */
+
+function openModal(modalElement) {
+  if (!modalElement) {
+    return;
+  }
+
+  modalElement.hidden = false;
+  document.body.style.overflow = "hidden";
+}
+
+function closeModal(modalElement) {
+  if (!modalElement) {
+    return;
+  }
+
+  modalElement.hidden = true;
+
+  const anyOpenModal = document.querySelector(
+    ".modal-overlay:not([hidden])"
+  );
+
+  if (!anyOpenModal) {
+    document.body.style.overflow = "";
+  }
+}
+
+function closeAllModals() {
+  document.querySelectorAll(".modal-overlay").forEach((modal) => {
+    modal.hidden = true;
   });
 
-  // Expose the pieces the rest of the file needs, without polluting
-  // the global namespace more than necessary.
-  window.__cheapsterAuth = {
-    provider: new GoogleAuthProvider(),
-    signInWithPopup,
-    signOut,
-  };
+  document.body.style.overflow = "";
 }
 
-async function handleGoogleLogin() {
+/* Explicit modal click triggers only */
+document.querySelectorAll("[data-close-modal]").forEach((button) => {
+  button.addEventListener("click", () => {
+    const modalId = button.dataset.closeModal;
+    closeModal(getElement(modalId));
+  });
+});
+
+document.querySelectorAll("[data-info-modal]").forEach((button) => {
+  button.addEventListener("click", () => {
+    const modalId = button.dataset.infoModal;
+    openModal(getElement(modalId));
+  });
+});
+
+/*
+  Clicking the dimmed area closes the modal.
+  Clicking inside the actual card does not.
+*/
+document.querySelectorAll(".modal-overlay").forEach((overlay) => {
+  overlay.addEventListener("click", (event) => {
+    if (event.target === overlay) {
+      closeModal(overlay);
+    }
+  });
+});
+
+/* Escape closes the currently open modal */
+document.addEventListener("keydown", (event) => {
+  if (event.key !== "Escape") {
+    return;
+  }
+
+  const openOverlay = document.querySelector(
+    ".modal-overlay:not([hidden])"
+  );
+
+  if (openOverlay) {
+    closeModal(openOverlay);
+  }
+});
+
+/* =========================================================
+   WELCOME POPUP
+========================================================= */
+
+/*
+  Shows strictly once in the browser profile lifetime,
+  controlled only by localStorage.
+
+  There is intentionally NO:
+  window.focus
+  visibilitychange
+  setInterval
+  recurring event
+*/
+
+function shouldShowWelcome() {
   try {
-    await initFirebase();
-    const { provider, signInWithPopup } = window.__cheapsterAuth;
-    await signInWithPopup(firebaseAuth, provider);
-    // onAuthStateChanged above will update the UI.
-  } catch (err) {
-    console.error("Google sign-in failed:", err);
-    alert("Login is not fully configured yet (placeholder Firebase keys). Replace firebaseConfig with your real project keys.");
+    return localStorage.getItem(WELCOME_STORAGE_KEY) !== "1";
+  } catch (error) {
+    /*
+      If localStorage is unavailable, avoid popup spam.
+      We simply don't repeatedly force the popup.
+    */
+    console.warn("localStorage unavailable:", error);
+    return false;
   }
 }
 
-async function handleLogout() {
+function markWelcomeAsSeen() {
   try {
-    if (!firebaseAuth) return;
-    const { signOut } = window.__cheapsterAuth;
-    await signOut(firebaseAuth);
-  } catch (err) {
-    console.error("Sign-out failed:", err);
+    localStorage.setItem(WELCOME_STORAGE_KEY, "1");
+  } catch (error) {
+    console.warn("Could not persist welcome state:", error);
   }
 }
 
-function renderAuthState() {
-  const googleBtn = document.getElementById("googleLoginBtn");
-  const profileMenu = document.getElementById("profileMenu");
-  const profileName = document.getElementById("profileName");
-  const profileAvatar = document.getElementById("profileAvatar");
-  const authGuardNotice = document.getElementById("authGuardNotice");
-  const giveawayForm = document.getElementById("giveawayForm");
-
-  if (currentUser) {
-    googleBtn.classList.add("hidden");
-    profileMenu.classList.remove("hidden");
-    const firstName = (currentUser.displayName || "Guest").split(" ")[0];
-    profileName.textContent = firstName;
-    profileAvatar.textContent = firstName.charAt(0).toUpperCase();
-
-    // Logged in: reveal the actual form, hide the auth-guard prompt.
-    authGuardNotice.classList.add("hidden");
-    giveawayForm.classList.remove("hidden");
-  } else {
-    googleBtn.classList.remove("hidden");
-    profileMenu.classList.add("hidden");
+/*
+  The welcome popup appears after the DOM has loaded once.
+*/
+function initializeWelcomePopup() {
+  if (!shouldShowWelcome()) {
+    return;
   }
+
+  markWelcomeAsSeen();
+
+  window.setTimeout(() => {
+    openModal(welcomeModal);
+  }, 550);
 }
 
-/* ---------------------------------------------------------
-   3. STORE GRID RENDER + SEARCH
---------------------------------------------------------- */
-const storeGrid = document.getElementById("storeGrid");
-const storeSearch = document.getElementById("storeSearch");
-const searchCount = document.getElementById("searchCount");
-const noResults = document.getElementById("noResults");
-const noResultsTerm = document.getElementById("noResultsTerm");
-const brandSelect = document.getElementById("brandSelect");
+/* =========================================================
+   GIVEAWAY MODAL
+========================================================= */
 
-function renderStoreGrid(filter = "") {
-  const term = filter.trim().toLowerCase();
-  const matches = STORES.filter(s => s.storeName.toLowerCase().includes(term));
+/*
+  This function is ONLY called by an explicit user action:
+  - Claim Giveaway button
+  - Shop Now button
+  - Welcome Claim button
+*/
+function openGiveawayModal() {
+  resetGiveawayState();
+  updateAuthNotice();
+  openModal(giveawayModal);
+}
 
+headerGiveawayBtn.addEventListener("click", () => {
+  openGiveawayModal();
+});
+
+welcomeClaimBtn.addEventListener("click", () => {
+  closeModal(welcomeModal);
+  openGiveawayModal();
+});
+
+/* =========================================================
+   STORE CARDS
+========================================================= */
+
+function renderStores(stores) {
   storeGrid.innerHTML = "";
-  matches.forEach(store => {
+
+  stores.forEach((store) => {
     const card = document.createElement("article");
     card.className = "store-card";
+    card.dataset.storeName = store.name.toLowerCase();
 
-    const logoWrap = document.createElement("div");
-    logoWrap.className = "store-logo-wrap";
-    const img = document.createElement("img");
-    img.src = store.logoUrl;
-    img.alt = `${store.storeName} logo`;
-    img.loading = "lazy";
-    img.onerror = () => {
-      logoWrap.innerHTML = `<span class="store-logo-fallback">${store.storeName}</span>`;
-    };
-    logoWrap.appendChild(img);
+    card.innerHTML = `
+      <div class="store-logo-wrap">
+        <img
+          class="store-logo"
+          src="${escapeHtml(store.logo)}"
+          alt="${escapeHtml(store.name)} logo"
+          loading="lazy"
+          referrerpolicy="no-referrer"
+        />
+      </div>
 
-    const shopBtn = document.createElement("a");
-    shopBtn.className = "store-shop-btn";
-    shopBtn.href = store.affiliateLink;
-    shopBtn.target = "_blank";
-    shopBtn.rel = "noopener";
-    shopBtn.textContent = "Shop Now";
-    shopBtn.dataset.storeName = store.storeName;
-    shopBtn.addEventListener("click", onShopNowClick);
+      <h3 class="store-name">${escapeHtml(store.name)}</h3>
+      <p class="store-meta">Shop through Cheapster.in</p>
 
-    card.appendChild(logoWrap);
-    card.appendChild(shopBtn);
+      <button
+        type="button"
+        class="shop-button"
+        data-shop-store="${escapeHtml(store.name)}"
+      >
+        Shop Now
+      </button>
+    `;
+
+    const logo = card.querySelector(".store-logo");
+
+    /*
+      Clearbit can fail or become unavailable.
+      Use a lightweight visual fallback instead of leaving
+      a broken image icon.
+    */
+    logo.addEventListener("error", () => {
+      const fallback = document.createElement("div");
+      fallback.className = "store-logo-fallback";
+      fallback.textContent = getInitials(store.name);
+
+      logo.replaceWith(fallback);
+    });
+
+    const shopButton = card.querySelector(".shop-button");
+
+    shopButton.addEventListener("click", () => {
+      handleShopNow(store);
+    });
+
     storeGrid.appendChild(card);
   });
 
-  noResults.classList.toggle("hidden", matches.length > 0 || term === "");
-  noResultsTerm.textContent = filter;
-  searchCount.textContent = term
-    ? `${matches.length} store${matches.length === 1 ? "" : "s"} found`
-    : `${STORES.length} stores available`;
+  updateStoreCount(stores.length);
 }
 
-function populateBrandDropdown() {
-  STORES.forEach(store => {
-    const opt = document.createElement("option");
-    opt.value = store.storeName;
-    opt.textContent = store.storeName;
-    brandSelect.appendChild(opt);
-  });
+function updateStoreCount(count) {
+  storeCount.textContent =
+    `${count} ${count === 1 ? "Store" : "Stores"}`;
+
+  emptyState.hidden = count !== 0;
 }
 
-function onShopNowClick(e) {
-  // Let the link open the store in a new tab natively (target="_blank"),
-  // and simultaneously surface the giveaway modal in this tab.
-  const storeName = e.currentTarget.dataset.storeName;
-  openModal("giveawayModal");
-  if (storeName && brandSelect) {
-    brandSelect.value = storeName;
-  }
+function filterStores(query) {
+  const normalizedQuery = query.trim().toLowerCase();
+
+  const filtered = STORES.filter((store) =>
+    store.name.toLowerCase().includes(normalizedQuery)
+  );
+
+  renderStores(filtered);
+
+  clearSearchButton.classList.toggle(
+    "visible",
+    normalizedQuery.length > 0
+  );
 }
 
-storeSearch.addEventListener("input", (e) => renderStoreGrid(e.target.value));
-
-/* ---------------------------------------------------------
-   4. MODAL SYSTEM (generic open/close)
---------------------------------------------------------- */
-function openModal(id) {
-  const modal = document.getElementById(id);
-  if (!modal) return;
-  modal.classList.remove("hidden");
-  document.body.style.overflow = "hidden";
-  const focusable = modal.querySelector("input, select, button");
-  if (focusable) focusable.focus({ preventScroll: true });
-}
-
-function closeModal(id) {
-  const modal = document.getElementById(id);
-  if (!modal) return;
-  modal.classList.add("hidden");
-  const anyOpen = document.querySelectorAll(".modal-overlay:not(.hidden)").length > 0;
-  if (!anyOpen) document.body.style.overflow = "";
-}
-
-document.querySelectorAll("[data-close-modal]").forEach(btn => {
-  btn.addEventListener("click", () => closeModal(btn.dataset.closeModal));
+searchInput.addEventListener("input", () => {
+  filterStores(searchInput.value);
 });
 
-document.querySelectorAll(".modal-overlay").forEach(overlay => {
-  overlay.addEventListener("click", (e) => {
-    if (e.target === overlay) closeModal(overlay.id);
-  });
+clearSearchButton.addEventListener("click", () => {
+  searchInput.value = "";
+  filterStores("");
+  searchInput.focus();
 });
 
-document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape") {
-    document.querySelectorAll(".modal-overlay:not(.hidden)").forEach(m => closeModal(m.id));
-  }
-});
+/* =========================================================
+   SHOP NOW
+========================================================= */
 
-/* Footer legal/info modal triggers */
-document.querySelectorAll("[data-modal]").forEach(btn => {
-  btn.addEventListener("click", () => openModal(btn.dataset.modal));
-});
+function handleShopNow(store) {
+  /*
+    Requirement:
+    1. Open affiliate URL in a NEW tab.
+    2. Open Giveaway Modal in CURRENT tab.
 
-document.getElementById("offersClaimNow").addEventListener("click", () => {
-  closeModal("modal-offers");
-  openModal("giveawayModal");
-});
+    The placeholder URL "#" is handled gracefully.
+  */
 
-/* ---------------------------------------------------------
-   5. WELCOME MODAL — first visit only (localStorage)
---------------------------------------------------------- */
-const WELCOME_KEY = "cheapster_welcome_seen";
+  const affiliateUrl = store.affiliateUrl || "#";
 
-function maybeShowWelcomeModal() {
-  if (!localStorage.getItem(WELCOME_KEY)) {
-    openModal("welcomeModal");
-    localStorage.setItem(WELCOME_KEY, "true");
-  }
-}
-
-/* ---------------------------------------------------------
-   6. GIVEAWAY TRIGGERS + AUTH GUARD
---------------------------------------------------------- */
-function openGiveawayFlow() {
-  openModal("giveawayModal");
-  const authGuardNotice = document.getElementById("authGuardNotice");
-  const giveawayForm = document.getElementById("giveawayForm");
-
-  if (currentUser) {
-    authGuardNotice.classList.add("hidden");
-    giveawayForm.classList.remove("hidden");
+  if (affiliateUrl === "#") {
+    /*
+      When affiliate URLs are still "#", opening a real
+      blank/new document would add unnecessary navigation.
+      We still create the requested new-tab behavior.
+    */
+    window.open("#", "_blank", "noopener,noreferrer");
   } else {
-    // Guest: intercept and ask for Google login before showing the form.
-    authGuardNotice.classList.remove("hidden");
-    giveawayForm.classList.add("hidden");
+    window.open(
+      affiliateUrl,
+      "_blank",
+      "noopener,noreferrer"
+    );
+  }
+
+  openGiveawayModal();
+
+  /*
+    Pre-select the store in the giveaway form.
+  */
+  const brandSelect = getElement("brand");
+
+  if (brandSelect) {
+    const matchingOption =
+      [...brandSelect.options].find(
+        (option) =>
+          option.value.toLowerCase() ===
+          store.name.toLowerCase()
+      );
+
+    if (matchingOption) {
+      brandSelect.value = matchingOption.value;
+    }
   }
 }
 
-document.getElementById("giveawayTriggerHeader").addEventListener("click", openGiveawayFlow);
-document.getElementById("giveawayTriggerOffers").addEventListener("click", openGiveawayFlow);
-document.getElementById("googleLoginBtn").addEventListener("click", handleGoogleLogin);
-document.getElementById("authGuardLoginBtn").addEventListener("click", handleGoogleLogin);
-document.getElementById("logoutBtn").addEventListener("click", handleLogout);
+/* =========================================================
+   FIREBASE AUTHENTICATION
+========================================================= */
 
-document.getElementById("profileTrigger").addEventListener("click", (e) => {
-  const trigger = e.currentTarget;
-  const dropdown = document.getElementById("profileDropdown");
-  const expanded = trigger.getAttribute("aria-expanded") === "true";
-  trigger.setAttribute("aria-expanded", String(!expanded));
-  dropdown.classList.toggle("open");
-});
+async function handleGoogleLogin() {
+  if (!auth || !googleProvider) {
+    alert(
+      "Firebase is not configured yet. Please add your Firebase Web App configuration in script.js."
+    );
+    return;
+  }
 
-document.addEventListener("click", (e) => {
-  const menu = document.getElementById("profileMenu");
-  if (!menu.contains(e.target)) {
-    document.getElementById("profileDropdown").classList.remove("open");
-    document.getElementById("profileTrigger").setAttribute("aria-expanded", "false");
+  googleLoginBtn.disabled = true;
+
+  const originalText =
+    googleLoginText.textContent;
+
+  googleLoginText.textContent = "Signing in...";
+
+  try {
+    await signInWithPopup(auth, googleProvider);
+  } catch (error) {
+    console.error("Google sign-in error:", error);
+
+    if (error.code === "auth/popup-closed-by-user") {
+      return;
+    }
+
+    if (error.code === "auth/popup-blocked") {
+      alert(
+        "The Google login popup was blocked by your browser. Please allow popups for this site and try again."
+      );
+      return;
+    }
+
+    alert(
+      "Google login failed. Please try again."
+    );
+  } finally {
+    googleLoginBtn.disabled = false;
+
+    if (currentUser) {
+      googleLoginText.textContent =
+        getShortUserName(currentUser);
+    } else {
+      googleLoginText.textContent = originalText;
+    }
+  }
+}
+
+function getShortUserName(user) {
+  if (!user) {
+    return "Login with Google";
+  }
+
+  if (user.displayName) {
+    const firstName =
+      user.displayName.trim().split(/\s+/)[0];
+
+    return firstName.length > 15
+      ? `${firstName.slice(0, 15)}…`
+      : firstName;
+  }
+
+  if (user.email) {
+    return user.email.split("@")[0];
+  }
+
+  return "Account";
+}
+
+function updateAuthUI() {
+  if (currentUser) {
+    googleLoginText.textContent =
+      getShortUserName(currentUser);
+
+    googleLoginBtn.setAttribute(
+      "title",
+      currentUser.email || "Google account"
+    );
+
+    updateAuthNotice();
+  } else {
+    googleLoginText.textContent =
+      "Login with Google";
+
+    googleLoginBtn.removeAttribute("title");
+
+    updateAuthNotice();
+  }
+}
+
+function updateAuthNotice() {
+  if (!authNotice) {
+    return;
+  }
+
+  authNotice.hidden = Boolean(currentUser);
+}
+
+googleLoginBtn.addEventListener(
+  "click",
+  handleGoogleLogin
+);
+
+if (auth) {
+  onAuthStateChanged(auth, (user) => {
+    currentUser = user;
+    updateAuthUI();
+  });
+}
+
+/*
+  Optional account logout:
+  Double-clicking the logged-in Google button logs out.
+  Normal click remains Google login / account action.
+*/
+googleLoginBtn.addEventListener("dblclick", async () => {
+  if (!currentUser || !auth) {
+    return;
+  }
+
+  const shouldLogout = confirm(
+    "Do you want to sign out of Cheapster.in?"
+  );
+
+  if (!shouldLogout) {
+    return;
+  }
+
+  try {
+    await signOut(auth);
+  } catch (error) {
+    console.error("Sign-out failed:", error);
   }
 });
 
-/* ---------------------------------------------------------
-   7. GIVEAWAY FORM — validation UI only.
-   NO submission logic / webhook is wired up here on purpose.
-   Hook your own compliant backend into this handler.
---------------------------------------------------------- */
-const giveawayForm = document.getElementById("giveawayForm");
+/* =========================================================
+   GIVEAWAY FORM VALIDATION
+========================================================= */
 
-function validateField(id, isValid, message) {
-  const input = document.getElementById(id);
-  const errorEl = document.getElementById(`err-${id}`);
-  input.classList.toggle("invalid", !isValid);
-  errorEl.textContent = isValid ? "" : message;
-  return isValid;
+function resetGiveawayValidation() {
+  const fields = [
+    ["fullName", "fullNameError"],
+    ["whatsappNumber", "whatsappError"],
+    ["orderId", "orderIdError"],
+    ["brand", "brandError"]
+  ];
+
+  fields.forEach(([inputId, errorId]) => {
+    clearFieldError(inputId, errorId);
+  });
 }
 
-giveawayForm.addEventListener("submit", (e) => {
-  e.preventDefault();
+function validateGiveawayForm() {
+  resetGiveawayValidation();
 
-  const fullName = document.getElementById("fullName").value.trim();
-  const whatsapp = document.getElementById("whatsapp").value.trim();
-  const orderId = document.getElementById("orderId").value.trim();
-  const brand = document.getElementById("brandSelect").value;
+  let valid = true;
 
-  const validName = validateField("fullName", fullName.length >= 2, "Enter your full name.");
-  const validWhatsapp = validateField("whatsapp", /^[0-9]{10}$/.test(whatsapp), "Enter a valid 10-digit number.");
-  const validOrderId = validateField("orderId", orderId.length >= 4, "Enter your store order ID.");
-  const validBrand = validateField("brand", brand.length > 0, "Select a brand.");
+  const fullName =
+    getElement("fullName").value.trim();
 
-  if (!(validName && validWhatsapp && validOrderId && validBrand)) return;
+  const whatsapp =
+    getElement("whatsappNumber").value.trim();
 
-  /* ---------------------------------------------------------
-     SUBMISSION LOGIC INTENTIONALLY OMITTED.
-     Example of what would go here once your backend is ready:
+  const orderId =
+    getElement("orderId").value.trim();
 
-       const GOOGLE_WEBHOOK_URL = "XXXX";
-       fetch(GOOGLE_WEBHOOK_URL, {
-         method: "POST",
-         headers: { "Content-Type": "application/json" },
-         body: JSON.stringify({ fullName, whatsapp, orderId, brand, uid: currentUser?.uid }),
-       })
-         .then(() => { closeModal("giveawayModal"); openModal("successModal"); giveawayForm.reset(); })
-         .catch((err) => console.error("Submission failed:", err));
-  --------------------------------------------------------- */
-  console.log("Giveaway entry (UI only — not submitted anywhere):", { fullName, whatsapp, orderId, brand });
+  const brand =
+    getElement("brand").value;
+
+  if (fullName.length < 2) {
+    showFieldError(
+      "fullName",
+      "fullNameError",
+      "Please enter your full name."
+    );
+    valid = false;
+  }
+
+  if (!/^\d{10}$/.test(whatsapp)) {
+    showFieldError(
+      "whatsappNumber",
+      "whatsappError",
+      "Enter a valid 10-digit WhatsApp number."
+    );
+    valid = false;
+  }
+
+  if (orderId.length < 2) {
+    showFieldError(
+      "orderId",
+      "orderIdError",
+      "Please enter your store order ID."
+    );
+    valid = false;
+  }
+
+  if (!brand) {
+    showFieldError(
+      "brand",
+      "brandError",
+      "Please select the purchased brand."
+    );
+    valid = false;
+  }
+
+  return valid;
+}
+
+/*
+  Keep WhatsApp field numeric only.
+*/
+getElement("whatsappNumber").addEventListener(
+  "input",
+  (event) => {
+    event.target.value =
+      event.target.value.replace(/\D/g, "").slice(0, 10);
+  }
+);
+
+/* =========================================================
+   GIVEAWAY SUBMISSION
+========================================================= */
+
+giveawayForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+
+  /*
+    Hard requirement:
+    Only logged-in users can submit.
+  */
+  if (!currentUser) {
+    updateAuthNotice();
+
+    alert(
+      "Please login with Google before submitting your giveaway entry."
+    );
+
+    return;
+  }
+
+  if (!validateGiveawayForm()) {
+    return;
+  }
+
+  if (
+    !WEBHOOK_URL ||
+    WEBHOOK_URL === "YOUR_WEBHOOK_URL"
+  ) {
+    alert(
+      "The giveaway webhook is not configured yet. Add your WEBHOOK_URL in script.js."
+    );
+    return;
+  }
+
+  const fullName =
+    getElement("fullName").value.trim();
+
+  const whatsappNumber =
+    getElement("whatsappNumber").value.trim();
+
+  const orderId =
+    getElement("orderId").value.trim();
+
+  const brand =
+    getElement("brand").value;
+
+  const payload = {
+    fullName,
+    whatsappNumber,
+    orderId,
+    brand,
+
+    /*
+      Firebase identity information is useful for
+      backend verification and duplicate prevention.
+    */
+    user: {
+      uid: currentUser.uid,
+      email: currentUser.email || "",
+      displayName: currentUser.displayName || ""
+    },
+
+    submittedAt: new Date().toISOString(),
+
+    source: "Cheapster.in",
+    formType: "Diwali Mega Giveaway"
+  };
+
+  setLoading(submitEntryBtn, true);
+
+  try {
+    const response = await fetch(WEBHOOK_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(payload)
+    });
+
+    if (!response.ok) {
+      throw new Error(
+        `Webhook request failed with HTTP ${response.status}`
+      );
+    }
+
+    giveawayForm.hidden = true;
+    giveawaySuccess.hidden = false;
+  } catch (error) {
+    console.error("Giveaway submission failed:", error);
+
+    alert(
+      "We couldn't submit your entry right now. Please check your connection and try again."
+    );
+  } finally {
+    setLoading(submitEntryBtn, false);
+  }
 });
 
-/* ---------------------------------------------------------
-   8. INIT
---------------------------------------------------------- */
-renderStoreGrid();
-populateBrandDropdown();
-maybeShowWelcomeModal();
-renderAuthState();
+/* =========================================================
+   GIVEAWAY MODAL RESET
+========================================================= */
+
+function resetGiveawayState() {
+  giveawayForm.hidden = false;
+  giveawaySuccess.hidden = true;
+
+  giveawayForm.reset();
+
+  resetGiveawayValidation();
+  setLoading(
+    submitEntryBtn,
+    false,
+    "Submit Entry"
+  );
+}
+
+/* =========================================================
+   CONTACT FORM
+========================================================= */
+
+/*
+  Requirement:
+  - DO NOT use fetch.
+  - Capture fields.
+  - Construct readable message.
+  - URL encode.
+  - Redirect/open WhatsApp.
+*/
+
+function resetContactValidation() {
+  const fields = [
+    ["contactName", "contactNameError"],
+    ["contactIssue", "contactIssueError"],
+    ["contactMessage", "contactMessageError"]
+  ];
+
+  fields.forEach(([inputId, errorId]) => {
+    clearFieldError(inputId, errorId);
+  });
+}
+
+function validateContactForm() {
+  resetContactValidation();
+
+  let valid = true;
+
+  const name =
+    getElement("contactName").value.trim();
+
+  const issue =
+    getElement("contactIssue").value;
+
+  const message =
+    getElement("contactMessage").value.trim();
+
+  if (name.length < 2) {
+    showFieldError(
+      "contactName",
+      "contactNameError",
+      "Please enter your name."
+    );
+    valid = false;
+  }
+
+  if (!issue) {
+    showFieldError(
+      "contactIssue",
+      "contactIssueError",
+      "Please select an issue."
+    );
+    valid = false;
+  }
+
+  if (message.length < 5) {
+    showFieldError(
+      "contactMessage",
+      "contactMessageError",
+      "Please enter a message."
+    );
+    valid = false;
+  }
+
+  return valid;
+}
+
+contactForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+
+  if (!validateContactForm()) {
+    return;
+  }
+
+  const name =
+    getElement("contactName").value.trim();
+
+  const issue =
+    getElement("contactIssue").value;
+
+  const message =
+    getElement("contactMessage").value.trim();
+
+  const whatsappMessage = [
+    "Hello Cheapster.in Support,",
+    "",
+    `Name: ${name}`,
+    `Issue: ${issue}`,
+    "",
+    "Message:",
+    message,
+    "",
+    "Sent from Cheapster.in Contact Support"
+  ].join("\n");
+
+  const encodedMessage =
+    encodeURIComponent(whatsappMessage);
+
+  const whatsappUrl =
+    `https://wa.me/${WHATSAPP_SUPPORT_NUMBER}?text=${encodedMessage}`;
+
+  /*
+    User specifically requested opening WhatsApp in a
+    new tab/window.
+  */
+  window.open(
+    whatsappUrl,
+    "_blank",
+    "noopener,noreferrer"
+  );
+});
+
+/* =========================================================
+   INITIALIZATION
+========================================================= */
+
+function initializeAppUI() {
+  renderStores(STORES);
+
+  currentYear.textContent =
+    new Date().getFullYear();
+
+  updateAuthUI();
+
+  /*
+    The welcome popup is initialized once.
+    It does NOT listen to focus/visibility changes.
+  */
+  initializeWelcomePopup();
+}
+
+initializeAppUI();
