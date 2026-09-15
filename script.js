@@ -1,8 +1,3 @@
-/* =========================================================
-   CHEAPSTER.IN
-   Vanilla JS + Firebase v9/v10 Modular SDK
-========================================================= */
-
 import {
   initializeApp
 } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
@@ -16,18 +11,9 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
 
 /* =========================================================
-   CONFIGURATION
+   CONFIG
 ========================================================= */
 
-/*
-  Replace these Firebase placeholders with your real Firebase
-  Web App configuration.
-
-  Firebase Console:
-  Project Settings
-  -> Your apps
-  -> Web app
-*/
 const FIREBASE_CONFIG = {
   apiKey: "YOUR_FIREBASE_API_KEY",
   authDomain: "YOUR_FIREBASE_PROJECT.firebaseapp.com",
@@ -37,36 +23,20 @@ const FIREBASE_CONFIG = {
   appId: "YOUR_FIREBASE_APP_ID"
 };
 
-/*
-  Replace this with your real webhook endpoint.
-
-  The browser will POST JSON here when a logged-in user
-  submits the giveaway form.
-*/
 const WEBHOOK_URL = "YOUR_WEBHOOK_URL";
 
-/*
-  WhatsApp support number specified in the brief.
-  International format, WITHOUT + or spaces.
-*/
 const WHATSAPP_SUPPORT_NUMBER = "919999999999";
 
-/*
-  One-time welcome popup key.
-
-  IMPORTANT:
-  - localStorage is used.
-  - No focus event.
-  - No visibilitychange event.
-  - No recurring timer.
-*/
-const WELCOME_STORAGE_KEY = "cheapster_welcome_seen_v1";
+const WELCOME_STORAGE_KEY =
+  "cheapster_welcome_seen_v1";
 
 /* =========================================================
    STORE DATA
+   Single grid — intentionally NO category headings.
 ========================================================= */
 
 const STORES = [
+  /* SHOPPING */
   {
     name: "Amazon",
     logo: "https://logo.clearbit.com/amazon.in",
@@ -88,14 +58,342 @@ const STORES = [
     affiliateUrl: "#"
   },
   {
+    name: "Tata CLiQ",
+    logo: "https://logo.clearbit.com/tatacliq.com",
+    affiliateUrl: "#"
+  },
+  {
     name: "Nykaa",
     logo: "https://logo.clearbit.com/nykaa.com",
+    affiliateUrl: "#"
+  },
+  {
+    name: "Meesho",
+    logo: "https://logo.clearbit.com/meesho.com",
+    affiliateUrl: "#"
+  },
+  {
+    name: "AliExpress",
+    logo: "https://logo.clearbit.com/aliexpress.com",
+    affiliateUrl: "#"
+  },
+
+  /* FASHION / LUXURY */
+  {
+    name: "Lenskart",
+    logo: "https://logo.clearbit.com/lenskart.com",
+    affiliateUrl: "#"
+  },
+  {
+    name: "Tanishq",
+    logo: "https://logo.clearbit.com/tanishq.co.in",
+    affiliateUrl: "#"
+  },
+  {
+    name: "Vastrado",
+    logo: "https://logo.clearbit.com/vastrado.com",
+    affiliateUrl: "#"
+  },
+
+  /* BEAUTY */
+  {
+    name: "Mamaearth",
+    logo: "https://logo.clearbit.com/mamaearth.in",
+    affiliateUrl: "#"
+  },
+  {
+    name: "Minimalist",
+    logo: "https://logo.clearbit.com/beminimalist.co",
+    affiliateUrl: "#"
+  },
+  {
+    name: "Sugar Cosmetics",
+    logo: "https://logo.clearbit.com/sugarcosmetics.com",
+    affiliateUrl: "#"
+  },
+  {
+    name: "Mamaearth",
+    logo: "https://logo.clearbit.com/mamaearth.in",
+    affiliateUrl: "#"
+  },
+  {
+    name: "Pilgrim",
+    logo: "https://logo.clearbit.com/discoverpilgrim.com",
+    affiliateUrl: "#"
+  },
+  {
+    name: "WOW Skin Science",
+    logo: "https://logo.clearbit.com:wowskinscience.com",
+    affiliateUrl: "#"
+  },
+  {
+    name: "The Derma Co",
+    logo: "https://logo.clearbit.com/thedermaco.com",
+    affiliateUrl: "#"
+  },
+  {
+    name: "Foxtale",
+    logo: "https://logo.clearbit.com/foxtale.in",
+    affiliateUrl: "#"
+  },
+  {
+    name: "Dot & Key",
+    logo: "https://logo.clearbit.com/dotandkey.com",
+    affiliateUrl: "#"
+  },
+  {
+    name: "Plum",
+    logo: "https://logo.clearbit.com/plumgoodness.com",
+    affiliateUrl: "#"
+  },
+  {
+    name: "Purplle",
+    logo: "https://logo.clearbit.com/purplle.com",
+    affiliateUrl: "#"
+  },
+
+  /* ELECTRONICS */
+  {
+    name: "Croma",
+    logo: "https://logo.clearbit.com/croma.com",
+    affiliateUrl: "#"
+  },
+  {
+    name: "Samsung",
+    logo: "https://logo.clearbit.com/samsung.com",
+    affiliateUrl: "#"
+  },
+  {
+    name: "OnePlus",
+    logo: "https://logo.clearbit.com/oneplus.in",
+    affiliateUrl: "#"
+  },
+  {
+    name: "Dell",
+    logo: "https://logo.clearbit.com/dell.com",
+    affiliateUrl: "#"
+  },
+  {
+    name: "Lenovo",
+    logo: "https://logo.clearbit.com/lenovo.com",
+    affiliateUrl: "#"
+  },
+  {
+    name: "boAt",
+    logo: "https://logo.clearbit.com/boat-lifestyle.com",
+    affiliateUrl: "#"
+  },
+  {
+    name: "HP",
+    logo: "https://logo.clearbit.com/hp.com",
+    affiliateUrl: "#"
+  },
+  {
+    name: "ASUS",
+    logo: "https://logo.clearbit.com/asus.com",
+    affiliateUrl: "#"
+  },
+  {
+    name: "Acer",
+    logo: "https://logo.clearbit.com/acer.com",
+    affiliateUrl: "#"
+  },
+  {
+    name: "JBL",
+    logo: "https://logo.clearbit.com/jbl.com",
+    affiliateUrl: "#"
+  },
+  {
+    name: "Noise",
+    logo: "https://logo.clearbit.com/gonoise.com",
+    affiliateUrl: "#"
+  },
+  {
+    name: "Nothing",
+    logo: "https://logo.clearbit.com/nothing.tech",
+    affiliateUrl: "#"
+  },
+
+  /* TRAVEL */
+  {
+    name: "MakeMyTrip",
+    logo: "https://logo.clearbit.com/makemytrip.com",
+    affiliateUrl: "#"
+  },
+  {
+    name: "Goibibo",
+    logo: "https://logo.clearbit.com/goibibo.com",
+    affiliateUrl: "#"
+  },
+  {
+    name: "Agoda",
+    logo: "https://logo.clearbit.com/agoda.com",
+    affiliateUrl: "#"
+  },
+  {
+    name: "Cleartrip",
+    logo: "https://logo.clearbit.com/cleartrip.com",
+    affiliateUrl: "#"
+  },
+  {
+    name: "Skyscanner",
+    logo: "https://logo.clearbit.com/skyscanner.net",
+    affiliateUrl: "#"
+  },
+  {
+    name: "Busbud",
+    logo: "https://logo.clearbit.com/busbud.com",
+    affiliateUrl: "#"
+  },
+  {
+    name: "Booking.com",
+    logo: "https://logo.clearbit.com/booking.com",
+    affiliateUrl: "#"
+  },
+  {
+    name: "Airbnb",
+    logo: "https://logo.clearbit.com/airbnb.com",
+    affiliateUrl: "#"
+  },
+  {
+    name: "Expedia",
+    logo: "https://logo.clearbit.com/expedia.com",
+    affiliateUrl: "#"
+  },
+
+  /* FOOD / GROCERY */
+  {
+    name: "Blinkit",
+    logo: "https://logo.clearbit.com/blinkit.com",
+    affiliateUrl: "#"
+  },
+  {
+    name: "Swiggy",
+    logo: "https://logo.clearbit.com/swiggy.com",
+    affiliateUrl: "#"
+  },
+  {
+    name: "Zomato",
+    logo: "https://logo.clearbit.com/zomato.com",
+    affiliateUrl: "#"
+  },
+  {
+    name: "BigBasket",
+    logo: "https://logo.clearbit.com/bigbasket.com",
+    affiliateUrl: "#"
+  },
+  {
+    name: "Instacart",
+    logo: "https://logo.clearbit.com/instacart.com",
+    affiliateUrl: "#"
+  },
+
+  /* HOSTING / BUSINESS */
+  {
+    name: "Hostinger",
+    logo: "https://logo.clearbit.com/hostinger.com",
+    affiliateUrl: "#"
+  },
+  {
+    name: "Bluehost",
+    logo: "https://logo.clearbit.com/bluehost.com",
+    affiliateUrl: "#"
+  },
+  {
+    name: "GoDaddy",
+    logo: "https://logo.clearbit.com/godaddy.com",
+    affiliateUrl: "#"
+  },
+  {
+    name: "Shopify",
+    logo: "https://logo.clearbit.com/shopify.com",
+    affiliateUrl: "#"
+  },
+  {
+    name: "Wix",
+    logo: "https://logo.clearbit.com/wix.com",
+    affiliateUrl: "#"
+  },
+  {
+    name: "Squarespace",
+    logo: "https://logo.clearbit.com/squarespace.com",
+    affiliateUrl: "#"
+  },
+
+  /* FINANCE / SERVICES */
+  {
+    name: "BankBazaar",
+    logo: "https://logo.clearbit.com/bankbazaar.com",
+    affiliateUrl: "#"
+  },
+  {
+    name: "Upstox",
+    logo: "https://logo.clearbit.com/upstox.com",
+    affiliateUrl: "#"
+  },
+  {
+    name: "Groww",
+    logo: "https://logo.clearbit.com/groww.in",
+    affiliateUrl: "#"
+  },
+
+  /* AI / SOFTWARE */
+  {
+    name: "ChatGPT",
+    logo: "https://logo.clearbit.com/openai.com",
+    affiliateUrl: "#"
+  },
+  {
+    name: "OpenArt AI",
+    logo: "https://logo.clearbit.com/openart.ai",
+    affiliateUrl: "#"
+  },
+  {
+    name: "InVideo",
+    logo: "https://logo.clearbit.com/invideo.io",
+    affiliateUrl: "#"
+  },
+  {
+    name: "Jasper AI",
+    logo: "https://logo.clearbit.com/jasper.ai",
+    affiliateUrl: "#"
+  },
+  {
+    name: "Canva",
+    logo: "https://logo.clearbit.com/canva.com",
+    affiliateUrl: "#"
+  },
+  {
+    name: "Grammarly",
+    logo: "https://logo.clearbit.com/grammarly.com",
+    affiliateUrl: "#"
+  },
+  {
+    name: "Notion",
+    logo: "https://logo.clearbit.com/notion.so",
+    affiliateUrl: "#"
+  },
+  {
+    name: "Adobe",
+    logo: "https://logo.clearbit.com/adobe.com",
+    affiliateUrl: "#"
+  },
+
+  /* SECURITY */
+  {
+    name: "Norton",
+    logo: "https://logo.clearbit.com/norton.com",
+    affiliateUrl: "#"
+  },
+  {
+    name: "Kaspersky",
+    logo: "https://logo.clearbit.com/kaspersky.com",
     affiliateUrl: "#"
   }
 ];
 
 /* =========================================================
-   FIREBASE INITIALIZATION
+   FIREBASE
 ========================================================= */
 
 let firebaseApp = null;
@@ -111,34 +409,53 @@ const firebaseConfigured =
 if (firebaseConfigured) {
   try {
     firebaseApp = initializeApp(FIREBASE_CONFIG);
+
     auth = getAuth(firebaseApp);
+
     googleProvider = new GoogleAuthProvider();
 
     googleProvider.setCustomParameters({
       prompt: "select_account"
     });
   } catch (error) {
-    console.error("Firebase initialization failed:", error);
+    console.error(
+      "Firebase initialization failed:",
+      error
+    );
   }
 } else {
   console.warn(
-    "Firebase is not configured yet. Add your real Firebase Web App keys to script.js."
+    "Firebase isn't configured yet. Add your Firebase keys."
   );
 }
 
 /* =========================================================
-   DOM REFERENCES
+   DOM
 ========================================================= */
 
-const storeGrid = document.getElementById("storeGrid");
-const emptyState = document.getElementById("emptyState");
-const storeCount = document.getElementById("storeCount");
-const searchInput = document.getElementById("storeSearch");
-const clearSearchButton = document.getElementById("clearSearch");
+const storeGrid =
+  document.getElementById("storeGrid");
 
-const welcomeModal = document.getElementById("welcomeModal");
-const giveawayModal = document.getElementById("giveawayModal");
-const authNotice = document.getElementById("authNotice");
+const emptyState =
+  document.getElementById("emptyState");
+
+const storeCount =
+  document.getElementById("storeCount");
+
+const searchInput =
+  document.getElementById("storeSearch");
+
+const clearSearchButton =
+  document.getElementById("clearSearch");
+
+const welcomeModal =
+  document.getElementById("welcomeModal");
+
+const giveawayModal =
+  document.getElementById("giveawayModal");
+
+const authNotice =
+  document.getElementById("authNotice");
 
 const headerGiveawayBtn =
   document.getElementById("headerGiveawayBtn");
@@ -167,10 +484,13 @@ const contactForm =
 const currentYear =
   document.getElementById("currentYear");
 
+const brandSelect =
+  document.getElementById("brand");
+
 let currentUser = null;
 
 /* =========================================================
-   UTILITIES
+   UTILITY
 ========================================================= */
 
 function escapeHtml(value) {
@@ -187,14 +507,23 @@ function getInitials(name) {
     .split(" ")
     .filter(Boolean)
     .slice(0, 2)
-    .map((part) => part.charAt(0))
+    .map((part) =>
+      part.charAt(0)
+    )
     .join("")
     .toUpperCase();
 }
 
-function setLoading(button, loading, defaultText = "Submit Entry") {
-  const label = button.querySelector(".button-label");
-  const loader = button.querySelector(".button-loader");
+function setLoading(
+  button,
+  loading,
+  defaultText = "Submit Entry"
+) {
+  const label =
+    button.querySelector(".button-label");
+
+  const loader =
+    button.querySelector(".button-loader");
 
   button.disabled = loading;
 
@@ -209,38 +538,8 @@ function setLoading(button, loading, defaultText = "Submit Entry") {
   }
 }
 
-function getElement(id) {
-  return document.getElementById(id);
-}
-
-function clearFieldError(inputId, errorId) {
-  const input = getElement(inputId);
-  const error = getElement(errorId);
-
-  if (input) {
-    input.closest(".form-group")?.classList.remove("has-error");
-  }
-
-  if (error) {
-    error.textContent = "";
-  }
-}
-
-function showFieldError(inputId, errorId, message) {
-  const input = getElement(inputId);
-  const error = getElement(errorId);
-
-  if (input) {
-    input.closest(".form-group")?.classList.add("has-error");
-  }
-
-  if (error) {
-    error.textContent = message;
-  }
-}
-
 /* =========================================================
-   MODAL SYSTEM
+   MODALS
 ========================================================= */
 
 function openModal(modalElement) {
@@ -249,6 +548,7 @@ function openModal(modalElement) {
   }
 
   modalElement.hidden = false;
+
   document.body.style.overflow = "hidden";
 }
 
@@ -259,104 +559,102 @@ function closeModal(modalElement) {
 
   modalElement.hidden = true;
 
-  const anyOpenModal = document.querySelector(
-    ".modal-overlay:not([hidden])"
-  );
+  const anotherModalOpen =
+    document.querySelector(
+      ".modal-overlay:not([hidden])"
+    );
 
-  if (!anyOpenModal) {
+  if (!anotherModalOpen) {
     document.body.style.overflow = "";
   }
 }
 
-function closeAllModals() {
-  document.querySelectorAll(".modal-overlay").forEach((modal) => {
-    modal.hidden = true;
+document
+  .querySelectorAll("[data-close-modal]")
+  .forEach((button) => {
+    button.addEventListener("click", () => {
+      closeModal(
+        document.getElementById(
+          button.dataset.closeModal
+        )
+      );
+    });
   });
 
-  document.body.style.overflow = "";
-}
-
-/* Explicit modal click triggers only */
-document.querySelectorAll("[data-close-modal]").forEach((button) => {
-  button.addEventListener("click", () => {
-    const modalId = button.dataset.closeModal;
-    closeModal(getElement(modalId));
+document
+  .querySelectorAll("[data-info-modal]")
+  .forEach((button) => {
+    button.addEventListener("click", () => {
+      openModal(
+        document.getElementById(
+          button.dataset.infoModal
+        )
+      );
+    });
   });
-});
 
-document.querySelectorAll("[data-info-modal]").forEach((button) => {
-  button.addEventListener("click", () => {
-    const modalId = button.dataset.infoModal;
-    openModal(getElement(modalId));
+document
+  .querySelectorAll(".modal-overlay")
+  .forEach((overlay) => {
+    overlay.addEventListener("click", (event) => {
+      if (event.target === overlay) {
+        closeModal(overlay);
+      }
+    });
   });
-});
 
-/*
-  Clicking the dimmed area closes the modal.
-  Clicking inside the actual card does not.
-*/
-document.querySelectorAll(".modal-overlay").forEach((overlay) => {
-  overlay.addEventListener("click", (event) => {
-    if (event.target === overlay) {
-      closeModal(overlay);
+document.addEventListener(
+  "keydown",
+  (event) => {
+    if (event.key !== "Escape") {
+      return;
     }
-  });
-});
 
-/* Escape closes the currently open modal */
-document.addEventListener("keydown", (event) => {
-  if (event.key !== "Escape") {
-    return;
+    const openOverlay =
+      document.querySelector(
+        ".modal-overlay:not([hidden])"
+      );
+
+    if (openOverlay) {
+      closeModal(openOverlay);
+    }
   }
-
-  const openOverlay = document.querySelector(
-    ".modal-overlay:not([hidden])"
-  );
-
-  if (openOverlay) {
-    closeModal(openOverlay);
-  }
-});
+);
 
 /* =========================================================
    WELCOME POPUP
+   ONLY ONCE PER BROWSER PROFILE.
+   NO FOCUS/VISIBILITY EVENT.
 ========================================================= */
-
-/*
-  Shows strictly once in the browser profile lifetime,
-  controlled only by localStorage.
-
-  There is intentionally NO:
-  window.focus
-  visibilitychange
-  setInterval
-  recurring event
-*/
 
 function shouldShowWelcome() {
   try {
-    return localStorage.getItem(WELCOME_STORAGE_KEY) !== "1";
-  } catch (error) {
+    return (
+      localStorage.getItem(
+        WELCOME_STORAGE_KEY
+      ) !== "1"
+    );
+  } catch {
     /*
-      If localStorage is unavailable, avoid popup spam.
-      We simply don't repeatedly force the popup.
+      Fail-safe:
+      Don't repeatedly spam the popup when storage
+      is unavailable.
     */
-    console.warn("localStorage unavailable:", error);
     return false;
   }
 }
 
 function markWelcomeAsSeen() {
   try {
-    localStorage.setItem(WELCOME_STORAGE_KEY, "1");
-  } catch (error) {
-    console.warn("Could not persist welcome state:", error);
+    localStorage.setItem(
+      WELCOME_STORAGE_KEY,
+      "1"
+    );
+  } catch {
+    /* Ignore storage errors */
   }
 }
 
-/*
-  The welcome popup appears after the DOM has loaded once.
-*/
 function initializeWelcomePopup() {
   if (!shouldShowWelcome()) {
     return;
@@ -370,41 +668,66 @@ function initializeWelcomePopup() {
 }
 
 /* =========================================================
-   GIVEAWAY MODAL
+   GIVEAWAY
 ========================================================= */
 
-/*
-  This function is ONLY called by an explicit user action:
-  - Claim Giveaway button
-  - Shop Now button
-  - Welcome Claim button
-*/
 function openGiveawayModal() {
   resetGiveawayState();
+
   updateAuthNotice();
+
   openModal(giveawayModal);
 }
 
-headerGiveawayBtn.addEventListener("click", () => {
-  openGiveawayModal();
-});
+headerGiveawayBtn.addEventListener(
+  "click",
+  () => {
+    openGiveawayModal();
+  }
+);
 
-welcomeClaimBtn.addEventListener("click", () => {
-  closeModal(welcomeModal);
-  openGiveawayModal();
-});
+welcomeClaimBtn.addEventListener(
+  "click",
+  () => {
+    closeModal(welcomeModal);
+    openGiveawayModal();
+  }
+);
 
 /* =========================================================
-   STORE CARDS
+   BRAND DROPDOWN
+========================================================= */
+
+function populateBrandDropdown() {
+  brandSelect.innerHTML = `
+    <option value="">
+      Select purchased brand
+    </option>
+  `;
+
+  STORES.forEach((store) => {
+    const option =
+      document.createElement("option");
+
+    option.value = store.name;
+    option.textContent = store.name;
+
+    brandSelect.appendChild(option);
+  });
+}
+
+/* =========================================================
+   STORE GRID
 ========================================================= */
 
 function renderStores(stores) {
   storeGrid.innerHTML = "";
 
   stores.forEach((store) => {
-    const card = document.createElement("article");
+    const card =
+      document.createElement("article");
+
     card.className = "store-card";
-    card.dataset.storeName = store.name.toLowerCase();
 
     card.innerHTML = `
       <div class="store-logo-wrap">
@@ -417,38 +740,51 @@ function renderStores(stores) {
         />
       </div>
 
-      <h3 class="store-name">${escapeHtml(store.name)}</h3>
-      <p class="store-meta">Shop through Cheapster.in</p>
+      <h3 class="store-name">
+        ${escapeHtml(store.name)}
+      </h3>
+
+      <p class="store-meta">
+        Shop through Cheapster.in
+      </p>
 
       <button
         type="button"
         class="shop-button"
-        data-shop-store="${escapeHtml(store.name)}"
       >
         Shop Now
       </button>
     `;
 
-    const logo = card.querySelector(".store-logo");
+    const logo =
+      card.querySelector(".store-logo");
 
-    /*
-      Clearbit can fail or become unavailable.
-      Use a lightweight visual fallback instead of leaving
-      a broken image icon.
-    */
-    logo.addEventListener("error", () => {
-      const fallback = document.createElement("div");
-      fallback.className = "store-logo-fallback";
-      fallback.textContent = getInitials(store.name);
+    logo.addEventListener(
+      "error",
+      () => {
+        const fallback =
+          document.createElement("div");
 
-      logo.replaceWith(fallback);
-    });
+        fallback.className =
+          "store-logo-fallback";
 
-    const shopButton = card.querySelector(".shop-button");
+        fallback.textContent =
+          getInitials(store.name);
 
-    shopButton.addEventListener("click", () => {
-      handleShopNow(store);
-    });
+        logo.replaceWith(fallback);
+      },
+      { once: true }
+    );
+
+    const shopButton =
+      card.querySelector(".shop-button");
+
+    shopButton.addEventListener(
+      "click",
+      () => {
+        handleShopNow(store);
+      }
+    );
 
     storeGrid.appendChild(card);
   });
@@ -460,15 +796,24 @@ function updateStoreCount(count) {
   storeCount.textContent =
     `${count} ${count === 1 ? "Store" : "Stores"}`;
 
-  emptyState.hidden = count !== 0;
+  emptyState.hidden =
+    count !== 0;
 }
 
-function filterStores(query) {
-  const normalizedQuery = query.trim().toLowerCase();
+/* =========================================================
+   SEARCH
+========================================================= */
 
-  const filtered = STORES.filter((store) =>
-    store.name.toLowerCase().includes(normalizedQuery)
-  );
+function filterStores(query) {
+  const normalizedQuery =
+    query.trim().toLowerCase();
+
+  const filtered =
+    STORES.filter((store) =>
+      store.name
+        .toLowerCase()
+        .includes(normalizedQuery)
+    );
 
   renderStores(filtered);
 
@@ -478,76 +823,77 @@ function filterStores(query) {
   );
 }
 
-searchInput.addEventListener("input", () => {
-  filterStores(searchInput.value);
-});
+searchInput.addEventListener(
+  "input",
+  () => {
+    filterStores(
+      searchInput.value
+    );
+  }
+);
 
-clearSearchButton.addEventListener("click", () => {
-  searchInput.value = "";
-  filterStores("");
-  searchInput.focus();
-});
+clearSearchButton.addEventListener(
+  "click",
+  () => {
+    searchInput.value = "";
+
+    filterStores("");
+
+    searchInput.focus();
+  }
+);
 
 /* =========================================================
    SHOP NOW
 ========================================================= */
 
 function handleShopNow(store) {
-  /*
-    Requirement:
-    1. Open affiliate URL in a NEW tab.
-    2. Open Giveaway Modal in CURRENT tab.
+  const affiliateUrl =
+    store.affiliateUrl || "#";
 
-    The placeholder URL "#" is handled gracefully.
+  /*
+    Open store in NEW TAB.
   */
 
-  const affiliateUrl = store.affiliateUrl || "#";
+  window.open(
+    affiliateUrl,
+    "_blank",
+    "noopener,noreferrer"
+  );
 
-  if (affiliateUrl === "#") {
-    /*
-      When affiliate URLs are still "#", opening a real
-      blank/new document would add unnecessary navigation.
-      We still create the requested new-tab behavior.
-    */
-    window.open("#", "_blank", "noopener,noreferrer");
-  } else {
-    window.open(
-      affiliateUrl,
-      "_blank",
-      "noopener,noreferrer"
-    );
-  }
+  /*
+    Giveaway opens in CURRENT TAB.
+  */
 
   openGiveawayModal();
 
   /*
-    Pre-select the store in the giveaway form.
+    Pre-select purchased brand.
   */
-  const brandSelect = getElement("brand");
 
-  if (brandSelect) {
-    const matchingOption =
-      [...brandSelect.options].find(
-        (option) =>
-          option.value.toLowerCase() ===
-          store.name.toLowerCase()
-      );
+  const matchingOption =
+    [...brandSelect.options].find(
+      (option) =>
+        option.value.toLowerCase() ===
+        store.name.toLowerCase()
+    );
 
-    if (matchingOption) {
-      brandSelect.value = matchingOption.value;
-    }
+  if (matchingOption) {
+    brandSelect.value =
+      matchingOption.value;
   }
 }
 
 /* =========================================================
-   FIREBASE AUTHENTICATION
+   GOOGLE LOGIN
 ========================================================= */
 
 async function handleGoogleLogin() {
   if (!auth || !googleProvider) {
     alert(
-      "Firebase is not configured yet. Please add your Firebase Web App configuration in script.js."
+      "Firebase is not configured yet. Add your Firebase Web App configuration in script.js."
     );
+
     return;
   }
 
@@ -556,21 +902,35 @@ async function handleGoogleLogin() {
   const originalText =
     googleLoginText.textContent;
 
-  googleLoginText.textContent = "Signing in...";
+  googleLoginText.textContent =
+    "Signing in...";
 
   try {
-    await signInWithPopup(auth, googleProvider);
+    await signInWithPopup(
+      auth,
+      googleProvider
+    );
   } catch (error) {
-    console.error("Google sign-in error:", error);
+    console.error(
+      "Google sign-in error:",
+      error
+    );
 
-    if (error.code === "auth/popup-closed-by-user") {
+    if (
+      error.code ===
+      "auth/popup-closed-by-user"
+    ) {
       return;
     }
 
-    if (error.code === "auth/popup-blocked") {
+    if (
+      error.code ===
+      "auth/popup-blocked"
+    ) {
       alert(
-        "The Google login popup was blocked by your browser. Please allow popups for this site and try again."
+        "Google login popup was blocked. Please allow popups for this site."
       );
+
       return;
     }
 
@@ -584,7 +944,8 @@ async function handleGoogleLogin() {
       googleLoginText.textContent =
         getShortUserName(currentUser);
     } else {
-      googleLoginText.textContent = originalText;
+      googleLoginText.textContent =
+        originalText;
     }
   }
 }
@@ -596,7 +957,9 @@ function getShortUserName(user) {
 
   if (user.displayName) {
     const firstName =
-      user.displayName.trim().split(/\s+/)[0];
+      user.displayName
+        .trim()
+        .split(/\s+/)[0];
 
     return firstName.length > 15
       ? `${firstName.slice(0, 15)}…`
@@ -610,33 +973,28 @@ function getShortUserName(user) {
   return "Account";
 }
 
+function updateAuthNotice() {
+  authNotice.hidden =
+    Boolean(currentUser);
+}
+
 function updateAuthUI() {
   if (currentUser) {
     googleLoginText.textContent =
       getShortUserName(currentUser);
 
-    googleLoginBtn.setAttribute(
-      "title",
-      currentUser.email || "Google account"
-    );
-
-    updateAuthNotice();
+    googleLoginBtn.title =
+      currentUser.email || "Google account";
   } else {
     googleLoginText.textContent =
       "Login with Google";
 
-    googleLoginBtn.removeAttribute("title");
-
-    updateAuthNotice();
-  }
-}
-
-function updateAuthNotice() {
-  if (!authNotice) {
-    return;
+    googleLoginBtn.removeAttribute(
+      "title"
+    );
   }
 
-  authNotice.hidden = Boolean(currentUser);
+  updateAuthNotice();
 }
 
 googleLoginBtn.addEventListener(
@@ -644,53 +1002,101 @@ googleLoginBtn.addEventListener(
   handleGoogleLogin
 );
 
+googleLoginBtn.addEventListener(
+  "dblclick",
+  async () => {
+    if (!currentUser || !auth) {
+      return;
+    }
+
+    const shouldLogout =
+      confirm(
+        "Do you want to sign out of Cheapster.in?"
+      );
+
+    if (!shouldLogout) {
+      return;
+    }
+
+    try {
+      await signOut(auth);
+    } catch (error) {
+      console.error(
+        "Sign-out failed:",
+        error
+      );
+    }
+  }
+);
+
 if (auth) {
-  onAuthStateChanged(auth, (user) => {
-    currentUser = user;
-    updateAuthUI();
-  });
+  onAuthStateChanged(
+    auth,
+    (user) => {
+      currentUser = user;
+      updateAuthUI();
+    }
+  );
 }
 
-/*
-  Optional account logout:
-  Double-clicking the logged-in Google button logs out.
-  Normal click remains Google login / account action.
-*/
-googleLoginBtn.addEventListener("dblclick", async () => {
-  if (!currentUser || !auth) {
-    return;
-  }
-
-  const shouldLogout = confirm(
-    "Do you want to sign out of Cheapster.in?"
-  );
-
-  if (!shouldLogout) {
-    return;
-  }
-
-  try {
-    await signOut(auth);
-  } catch (error) {
-    console.error("Sign-out failed:", error);
-  }
-});
-
 /* =========================================================
-   GIVEAWAY FORM VALIDATION
+   GIVEAWAY VALIDATION
 ========================================================= */
 
+function clearFieldError(
+  inputId,
+  errorId
+) {
+  const input =
+    document.getElementById(inputId);
+
+  const error =
+    document.getElementById(errorId);
+
+  input
+    ?.closest(".form-group")
+    ?.classList.remove("has-error");
+
+  if (error) {
+    error.textContent = "";
+  }
+}
+
+function showFieldError(
+  inputId,
+  errorId,
+  message
+) {
+  const input =
+    document.getElementById(inputId);
+
+  const error =
+    document.getElementById(errorId);
+
+  input
+    ?.closest(".form-group")
+    ?.classList.add("has-error");
+
+  if (error) {
+    error.textContent =
+      message;
+  }
+}
+
 function resetGiveawayValidation() {
-  const fields = [
+  [
     ["fullName", "fullNameError"],
     ["whatsappNumber", "whatsappError"],
     ["orderId", "orderIdError"],
     ["brand", "brandError"]
-  ];
-
-  fields.forEach(([inputId, errorId]) => {
-    clearFieldError(inputId, errorId);
-  });
+  ].forEach(
+    ([inputId, errorId]) => {
+      clearFieldError(
+        inputId,
+        errorId
+      );
+    }
+  );
 }
 
 function validateGiveawayForm() {
@@ -699,16 +1105,24 @@ function validateGiveawayForm() {
   let valid = true;
 
   const fullName =
-    getElement("fullName").value.trim();
+    document.getElementById(
+      "fullName"
+    ).value.trim();
 
   const whatsapp =
-    getElement("whatsappNumber").value.trim();
+    document.getElementById(
+      "whatsappNumber"
+    ).value.trim();
 
   const orderId =
-    getElement("orderId").value.trim();
+    document.getElementById(
+      "orderId"
+    ).value.trim();
 
   const brand =
-    getElement("brand").value;
+    document.getElementById(
+      "brand"
+    ).value;
 
   if (fullName.length < 2) {
     showFieldError(
@@ -716,6 +1130,7 @@ function validateGiveawayForm() {
       "fullNameError",
       "Please enter your full name."
     );
+
     valid = false;
   }
 
@@ -725,6 +1140,7 @@ function validateGiveawayForm() {
       "whatsappError",
       "Enter a valid 10-digit WhatsApp number."
     );
+
     valid = false;
   }
 
@@ -734,6 +1150,7 @@ function validateGiveawayForm() {
       "orderIdError",
       "Please enter your store order ID."
     );
+
     valid = false;
   }
 
@@ -743,178 +1160,212 @@ function validateGiveawayForm() {
       "brandError",
       "Please select the purchased brand."
     );
+
     valid = false;
   }
 
   return valid;
 }
 
-/*
-  Keep WhatsApp field numeric only.
-*/
-getElement("whatsappNumber").addEventListener(
-  "input",
-  (event) => {
-    event.target.value =
-      event.target.value.replace(/\D/g, "").slice(0, 10);
+document
+  .getElementById("whatsappNumber")
+  .addEventListener(
+    "input",
+    (event) => {
+      event.target.value =
+        event.target.value
+          .replace(/\D/g, "")
+          .slice(0, 10);
+    }
+  );
+
+/* =========================================================
+   GIVEAWAY SUBMIT
+========================================================= */
+
+giveawayForm.addEventListener(
+  "submit",
+  async (event) => {
+    event.preventDefault();
+
+    if (!currentUser) {
+      updateAuthNotice();
+
+      alert(
+        "Please login with Google before submitting your giveaway entry."
+      );
+
+      return;
+    }
+
+    if (!validateGiveawayForm()) {
+      return;
+    }
+
+    if (
+      !WEBHOOK_URL ||
+      WEBHOOK_URL ===
+        "YOUR_WEBHOOK_URL"
+    ) {
+      alert(
+        "Please configure WEBHOOK_URL in script.js first."
+      );
+
+      return;
+    }
+
+    const fullName =
+      document.getElementById(
+        "fullName"
+      ).value.trim();
+
+    const whatsappNumber =
+      document.getElementById(
+        "whatsappNumber"
+      ).value.trim();
+
+    const orderId =
+      document.getElementById(
+        "orderId"
+      ).value.trim();
+
+    const brand =
+      document.getElementById(
+        "brand"
+      ).value;
+
+    const payload = {
+      fullName,
+      whatsappNumber,
+      orderId,
+      brand,
+
+      user: {
+        uid: currentUser.uid,
+        email:
+          currentUser.email || "",
+        displayName:
+          currentUser.displayName || ""
+      },
+
+      submittedAt:
+        new Date().toISOString(),
+
+      source:
+        "Cheapster.in",
+
+      formType:
+        "Diwali Mega Giveaway"
+    };
+
+    setLoading(
+      submitEntryBtn,
+      true
+    );
+
+    try {
+      const response =
+        await fetch(
+          WEBHOOK_URL,
+          {
+            method: "POST",
+
+            headers: {
+              "Content-Type":
+                "application/json"
+            },
+
+            body:
+              JSON.stringify(payload)
+          }
+        );
+
+      if (!response.ok) {
+        throw new Error(
+          `Webhook returned HTTP ${response.status}`
+        );
+      }
+
+      giveawayForm.hidden = true;
+      giveawaySuccess.hidden =
+        false;
+    } catch (error) {
+      console.error(
+        "Giveaway submission failed:",
+        error
+      );
+
+      alert(
+        "We couldn't submit your entry right now. Please try again."
+      );
+    } finally {
+      setLoading(
+        submitEntryBtn,
+        false
+      );
+    }
   }
 );
 
 /* =========================================================
-   GIVEAWAY SUBMISSION
-========================================================= */
-
-giveawayForm.addEventListener("submit", async (event) => {
-  event.preventDefault();
-
-  /*
-    Hard requirement:
-    Only logged-in users can submit.
-  */
-  if (!currentUser) {
-    updateAuthNotice();
-
-    alert(
-      "Please login with Google before submitting your giveaway entry."
-    );
-
-    return;
-  }
-
-  if (!validateGiveawayForm()) {
-    return;
-  }
-
-  if (
-    !WEBHOOK_URL ||
-    WEBHOOK_URL === "YOUR_WEBHOOK_URL"
-  ) {
-    alert(
-      "The giveaway webhook is not configured yet. Add your WEBHOOK_URL in script.js."
-    );
-    return;
-  }
-
-  const fullName =
-    getElement("fullName").value.trim();
-
-  const whatsappNumber =
-    getElement("whatsappNumber").value.trim();
-
-  const orderId =
-    getElement("orderId").value.trim();
-
-  const brand =
-    getElement("brand").value;
-
-  const payload = {
-    fullName,
-    whatsappNumber,
-    orderId,
-    brand,
-
-    /*
-      Firebase identity information is useful for
-      backend verification and duplicate prevention.
-    */
-    user: {
-      uid: currentUser.uid,
-      email: currentUser.email || "",
-      displayName: currentUser.displayName || ""
-    },
-
-    submittedAt: new Date().toISOString(),
-
-    source: "Cheapster.in",
-    formType: "Diwali Mega Giveaway"
-  };
-
-  setLoading(submitEntryBtn, true);
-
-  try {
-    const response = await fetch(WEBHOOK_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(payload)
-    });
-
-    if (!response.ok) {
-      throw new Error(
-        `Webhook request failed with HTTP ${response.status}`
-      );
-    }
-
-    giveawayForm.hidden = true;
-    giveawaySuccess.hidden = false;
-  } catch (error) {
-    console.error("Giveaway submission failed:", error);
-
-    alert(
-      "We couldn't submit your entry right now. Please check your connection and try again."
-    );
-  } finally {
-    setLoading(submitEntryBtn, false);
-  }
-});
-
-/* =========================================================
-   GIVEAWAY MODAL RESET
+   GIVEAWAY RESET
 ========================================================= */
 
 function resetGiveawayState() {
   giveawayForm.hidden = false;
-  giveawaySuccess.hidden = true;
+
+  giveawaySuccess.hidden =
+    true;
 
   giveawayForm.reset();
 
   resetGiveawayValidation();
+
   setLoading(
     submitEntryBtn,
     false,
     "Submit Entry"
   );
+
+  updateAuthNotice();
 }
 
 /* =========================================================
    CONTACT FORM
 ========================================================= */
 
-/*
-  Requirement:
-  - DO NOT use fetch.
-  - Capture fields.
-  - Construct readable message.
-  - URL encode.
-  - Redirect/open WhatsApp.
-*/
-
-function resetContactValidation() {
-  const fields = [
-    ["contactName", "contactNameError"],
-    ["contactIssue", "contactIssueError"],
-    ["contactMessage", "contactMessageError"]
-  ];
-
-  fields.forEach(([inputId, errorId]) => {
-    clearFieldError(inputId, errorId);
-  });
-}
-
 function validateContactForm() {
-  resetContactValidation();
+  clearFieldError(
+    "contactName",
+    "contactNameError"
+  );
+
+  clearFieldError(
+    "contactIssue",
+    "contactIssueError"
+  );
+
+  clearFieldError(
+    "contactMessage",
+    "contactMessageError"
+  );
 
   let valid = true;
 
   const name =
-    getElement("contactName").value.trim();
+    document.getElementById(
+      "contactName"
+    ).value.trim();
 
   const issue =
-    getElement("contactIssue").value;
+    document.getElementById(
+      "contactIssue"
+    ).value;
 
   const message =
-    getElement("contactMessage").value.trim();
+    document.getElementById(
+      "contactMessage"
+    ).value.trim();
 
   if (name.length < 2) {
     showFieldError(
@@ -922,6 +1373,7 @@ function validateContactForm() {
       "contactNameError",
       "Please enter your name."
     );
+
     valid = false;
   }
 
@@ -931,6 +1383,7 @@ function validateContactForm() {
       "contactIssueError",
       "Please select an issue."
     );
+
     valid = false;
   }
 
@@ -940,62 +1393,77 @@ function validateContactForm() {
       "contactMessageError",
       "Please enter a message."
     );
+
     valid = false;
   }
 
   return valid;
 }
 
-contactForm.addEventListener("submit", (event) => {
-  event.preventDefault();
+contactForm.addEventListener(
+  "submit",
+  (event) => {
+    event.preventDefault();
 
-  if (!validateContactForm()) {
-    return;
+    if (!validateContactForm()) {
+      return;
+    }
+
+    const name =
+      document.getElementById(
+        "contactName"
+      ).value.trim();
+
+    const issue =
+      document.getElementById(
+        "contactIssue"
+      ).value;
+
+    const message =
+      document.getElementById(
+        "contactMessage"
+      ).value.trim();
+
+    const whatsappMessage = [
+      "Hello Cheapster.in Support,",
+      "",
+      `Name: ${name}`,
+      `Issue: ${issue}`,
+      "",
+      "Message:",
+      message,
+      "",
+      "Sent from Cheapster.in Contact Support"
+    ].join("\n");
+
+    const encodedMessage =
+      encodeURIComponent(
+        whatsappMessage
+      );
+
+    const whatsappUrl =
+      `https://wa.me/${WHATSAPP_SUPPORT_NUMBER}?text=${encodedMessage}`;
+
+    /*
+      No fetch here.
+      Opens WhatsApp directly in a new tab.
+    */
+
+    window.open(
+      whatsappUrl,
+      "_blank",
+      "noopener,noreferrer"
+    );
   }
-
-  const name =
-    getElement("contactName").value.trim();
-
-  const issue =
-    getElement("contactIssue").value;
-
-  const message =
-    getElement("contactMessage").value.trim();
-
-  const whatsappMessage = [
-    "Hello Cheapster.in Support,",
-    "",
-    `Name: ${name}`,
-    `Issue: ${issue}`,
-    "",
-    "Message:",
-    message,
-    "",
-    "Sent from Cheapster.in Contact Support"
-  ].join("\n");
-
-  const encodedMessage =
-    encodeURIComponent(whatsappMessage);
-
-  const whatsappUrl =
-    `https://wa.me/${WHATSAPP_SUPPORT_NUMBER}?text=${encodedMessage}`;
-
-  /*
-    User specifically requested opening WhatsApp in a
-    new tab/window.
-  */
-  window.open(
-    whatsappUrl,
-    "_blank",
-    "noopener,noreferrer"
-  );
-});
+);
 
 /* =========================================================
-   INITIALIZATION
+   INIT
 ========================================================= */
 
-function initializeAppUI() {
+function initializeUI() {
+  populateBrandDropdown();
+
   renderStores(STORES);
 
   currentYear.textContent =
@@ -1003,11 +1471,7 @@ function initializeAppUI() {
 
   updateAuthUI();
 
-  /*
-    The welcome popup is initialized once.
-    It does NOT listen to focus/visibility changes.
-  */
   initializeWelcomePopup();
 }
 
-initializeAppUI();
+initializeUI();
