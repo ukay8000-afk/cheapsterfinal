@@ -1574,3 +1574,55 @@ img {
     transition-duration: 0.001ms !important;
   }
 }
+
+/* DIWALI BANNER CSS */
+.premium-offer-banner {
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.15), rgba(15, 15, 15, 0.95));
+  border: 1px solid #d4af37;
+  border-radius: 12px;
+  padding: 25px 20px;
+  text-align: center;
+  margin: 20px auto 40px auto;
+  max-width: 90%;
+  box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
+  backdrop-filter: blur(10px);
+}
+
+.premium-offer-banner h2 {
+  color: #d4af37;
+  margin-top: 0;
+  margin-bottom: 12px;
+  font-size: 1.8rem;
+  letter-spacing: 1px;
+  text-shadow: 0 0 10px rgba(212, 175, 55, 0.6);
+}
+
+.premium-offer-banner h3 {
+  color: #ffffff;
+  font-size: 1.2rem;
+  margin-bottom: 12px;
+  font-weight: 500;
+}
+
+.premium-offer-banner h3 span {
+  color: #d4af37;
+  font-weight: 800;
+  font-size: 1.4rem;
+}
+
+.premium-offer-banner p {
+  color: #cccccc;
+  font-size: 0.95rem;
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+.legal-badge {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  color: #aaaaaa;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
