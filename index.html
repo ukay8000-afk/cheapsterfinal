@@ -7,7 +7,7 @@
   <title>Cheapster.in — Shop. Claim. Reward.</title>
   <meta
     name="description"
-    content="Cheapster.in — discover leading shopping platforms and enter our Diwali Mega Giveaway."
+    content="Cheapster.in — discover leading shopping, fashion, beauty, electronics, travel, food, AI and business platforms."
   />
   <meta name="theme-color" content="#0a0a0a" />
 
@@ -22,13 +22,10 @@
 </head>
 
 <body>
-  <!-- Ambient background -->
   <div class="ambient ambient-one"></div>
   <div class="ambient ambient-two"></div>
 
-  <!-- =========================
-       HEADER
-  ========================== -->
+  <!-- HEADER -->
   <header class="site-header">
     <div class="header-inner">
       <a href="#" class="brand" aria-label="Cheapster.in home">
@@ -51,11 +48,7 @@
           id="googleLoginBtn"
           type="button"
         >
-          <svg
-            class="google-icon"
-            viewBox="0 0 24 24"
-            aria-hidden="true"
-          >
+          <svg class="google-icon" viewBox="0 0 24 24" aria-hidden="true">
             <path
               fill="#4285F4"
               d="M21.35 12.27c0-.79-.07-1.54-.23-2.27H12v4.3h5.24a4.48 4.48 0 0 1-1.95 2.94v2.44h3.15c1.85-1.7 2.91-4.2 2.91-7.41z"
@@ -73,6 +66,7 @@
               d="M12 6.38c1.44 0 2.73.5 3.75 1.48l2.81-2.81C16.86 3.44 14.64 2.5 12 2.5a9.8 9.8 0 0 0-8.77 5.5l3.25 2.44C7.26 8.11 9.43 6.38 12 6.38z"
             />
           </svg>
+
           <span id="googleLoginText">Login with Google</span>
         </button>
       </div>
@@ -80,9 +74,7 @@
   </header>
 
   <main>
-    <!-- =========================
-         HERO
-    ========================== -->
+    <!-- HERO -->
     <section class="hero">
       <div class="hero-glow"></div>
 
@@ -98,8 +90,8 @@
         </h1>
 
         <p class="hero-description">
-          Discover trusted shopping platforms, shop through Cheapster.in,
-          and enter our exclusive giveaway.
+          Discover leading stores, travel platforms, beauty brands,
+          technology companies, AI tools and more—all in one place.
         </p>
 
         <div class="search-wrap">
@@ -113,7 +105,7 @@
           <input
             type="search"
             id="storeSearch"
-            placeholder="Search stores..."
+            placeholder="Search Amazon, Myntra, ChatGPT, Lenskart..."
             autocomplete="off"
             aria-label="Search stores"
           />
@@ -130,17 +122,15 @@
       </div>
     </section>
 
-    <!-- =========================
-         STORES
-    ========================== -->
+    <!-- ALL STORES — NO CATEGORY HEADINGS -->
     <section class="stores-section">
       <div class="section-heading">
         <div>
-          <span class="section-kicker">FEATURED STORES</span>
-          <h2>Shop your favourites</h2>
+          <span class="section-kicker">ALL PARTNERS & STORES</span>
+          <h2>Explore everything</h2>
         </div>
 
-        <span class="store-count" id="storeCount">5 Stores</span>
+        <span class="store-count" id="storeCount">0 Stores</span>
       </div>
 
       <div class="store-grid" id="storeGrid"></div>
@@ -153,9 +143,7 @@
     </section>
   </main>
 
-  <!-- =========================
-       FOOTER
-  ========================== -->
+  <!-- FOOTER -->
   <footer class="site-footer">
     <div class="footer-inner">
       <div class="footer-brand">
@@ -163,20 +151,26 @@
           <span class="brand-mark">C</span>
           <span class="brand-text">Cheapster<span>.in</span></span>
         </a>
+
         <p>
-          Shop through your favourite platforms and discover more ways to
-          make every purchase rewarding.
+          Shop through your favourite platforms and discover more ways
+          to make every purchase rewarding.
         </p>
       </div>
 
       <div class="footer-links">
-        <button type="button" data-info-modal="aboutModal">About Us</button>
+        <button type="button" data-info-modal="aboutModal">
+          About Us
+        </button>
+
         <button type="button" data-info-modal="policyModal">
           Giveaway &amp; Payout Policy
         </button>
+
         <button type="button" data-info-modal="termsModal">
           Terms &amp; Privacy
         </button>
+
         <button type="button" data-info-modal="contactModal">
           Contact Us
         </button>
@@ -184,15 +178,15 @@
     </div>
 
     <div class="footer-bottom">
-      <span>© <span id="currentYear"></span> Cheapster.in. All rights reserved.</span>
+      <span>
+        © <span id="currentYear"></span> Cheapster.in. All rights reserved.
+      </span>
+
       <span>Independent affiliate directory.</span>
     </div>
   </footer>
 
-  <!-- =========================
-       WELCOME POPUP
-       Shows ONLY ONCE PER LIFETIME
-  ========================== -->
+  <!-- WELCOME POPUP -->
   <div class="modal-overlay" id="welcomeModal" hidden>
     <div
       class="modal welcome-modal"
@@ -218,8 +212,8 @@
       </h2>
 
       <p>
-        Explore featured stores, shop through Cheapster.in, and enter our
-        Diwali Mega Giveaway.
+        Explore featured stores, shop through Cheapster.in,
+        and enter our Diwali Mega Giveaway.
       </p>
 
       <button
@@ -240,9 +234,7 @@
     </div>
   </div>
 
-  <!-- =========================
-       GIVEAWAY FORM MODAL
-  ========================== -->
+  <!-- GIVEAWAY MODAL -->
   <div class="modal-overlay" id="giveawayModal" hidden>
     <div
       class="modal giveaway-modal"
@@ -266,21 +258,25 @@
       <h2 id="giveawayTitle">Diwali Mega Giveaway! 🎉</h2>
 
       <p class="modal-subtitle">
-        Complete your purchase through Cheapster.in and submit your claim
-        entry.
+        Complete your purchase through Cheapster.in and submit
+        your claim entry.
       </p>
 
       <div id="authNotice" class="auth-notice" hidden>
         <div class="notice-icon">🔒</div>
+
         <div>
           <strong>Google login required</strong>
-          <p>You need to sign in before submitting a giveaway entry.</p>
+          <p>
+            You need to sign in before submitting a giveaway entry.
+          </p>
         </div>
       </div>
 
       <form id="giveawayForm" novalidate>
         <div class="form-group">
           <label for="fullName">Full Name</label>
+
           <input
             type="text"
             id="fullName"
@@ -290,11 +286,13 @@
             autocomplete="name"
             required
           />
+
           <small class="field-error" id="fullNameError"></small>
         </div>
 
         <div class="form-group">
           <label for="whatsappNumber">WhatsApp Number</label>
+
           <input
             type="tel"
             id="whatsappNumber"
@@ -305,11 +303,13 @@
             maxlength="10"
             required
           />
+
           <small class="field-error" id="whatsappError"></small>
         </div>
 
         <div class="form-group">
           <label for="orderId">Store Order ID</label>
+
           <input
             type="text"
             id="orderId"
@@ -318,19 +318,17 @@
             maxlength="120"
             required
           />
+
           <small class="field-error" id="orderIdError"></small>
         </div>
 
         <div class="form-group">
           <label for="brand">Brand</label>
+
           <select id="brand" name="brand" required>
             <option value="">Select purchased brand</option>
-            <option value="Amazon">Amazon</option>
-            <option value="Flipkart">Flipkart</option>
-            <option value="Myntra">Myntra</option>
-            <option value="Ajio">AJIO</option>
-            <option value="Nykaa">Nykaa</option>
           </select>
+
           <small class="field-error" id="brandError"></small>
         </div>
 
@@ -344,18 +342,21 @@
         </button>
 
         <p class="form-disclaimer">
-          By submitting, you agree to the Giveaway &amp; Payout Policy and
-          Terms &amp; Privacy Policy.
+          By submitting, you agree to the Giveaway &amp; Payout Policy
+          and Terms &amp; Privacy Policy.
         </p>
       </form>
 
       <div class="success-state" id="giveawaySuccess" hidden>
         <div class="success-icon">✓</div>
+
         <h3>Entry Submitted Successfully</h3>
+
         <p>
-          Your giveaway entry has been recorded. Keep your order details
-          available for verification.
+          Your giveaway entry has been recorded. Keep your order
+          details available for verification.
         </p>
+
         <button
           type="button"
           class="btn btn-secondary"
@@ -367,9 +368,7 @@
     </div>
   </div>
 
-  <!-- =========================
-       ABOUT US MODAL
-  ========================== -->
+  <!-- ABOUT US -->
   <div class="modal-overlay" id="aboutModal" hidden>
     <div
       class="modal legal-modal"
@@ -387,22 +386,21 @@
       </button>
 
       <span class="modal-kicker">CHEAPSTER.IN</span>
+
       <h2 id="aboutTitle">About Us</h2>
 
       <div class="legal-content">
         <p>
           Welcome to Cheapster.in, India's most rewarding affiliate
           directory. Our mission is simple: to help you find the best
-          platforms for your shopping needs while giving you a chance to win
-          incredible rewards.
+          platforms for your shopping needs while giving you a chance
+          to win incredible rewards.
         </p>
       </div>
     </div>
   </div>
 
-  <!-- =========================
-       GIVEAWAY POLICY MODAL
-  ========================== -->
+  <!-- GIVEAWAY POLICY -->
   <div class="modal-overlay" id="policyModal" hidden>
     <div
       class="modal legal-modal"
@@ -420,31 +418,31 @@
       </button>
 
       <span class="modal-kicker">TRANSPARENT &amp; SIMPLE</span>
+
       <h2 id="policyTitle">Giveaway &amp; Payout Policy</h2>
 
       <div class="legal-content">
         <p>
-          <strong>DIWALI MEGA GIVEAWAY:</strong> Shop through Cheapster.in and
-          stand a chance to win 100% of your order value!
+          <strong>DIWALI MEGA GIVEAWAY:</strong> Shop through Cheapster.in
+          and stand a chance to win 100% of your order value!
         </p>
 
         <p>
-          <strong>HOW IT WORKS:</strong> 1. Click 'Shop Now'. 2. Complete
-          purchase. 3. Fill the Claim form.
+          <strong>HOW IT WORKS:</strong> 1. Click 'Shop Now'.
+          2. Complete purchase. 3. Fill the Claim form.
         </p>
 
         <p>
-          <strong>IMPORTANT PAYOUT RULE:</strong> To prevent order-cancellation
-          fraud, all giveaway payouts are processed ONLY after the official
-          15-30 day return window of the respective store has closed.
+          <strong>IMPORTANT PAYOUT RULE:</strong> To prevent
+          order-cancellation fraud, all giveaway payouts are processed
+          ONLY after the official 15-30 day return window of the
+          respective store has closed.
         </p>
       </div>
     </div>
   </div>
 
-  <!-- =========================
-       TERMS & PRIVACY MODAL
-  ========================== -->
+  <!-- TERMS -->
   <div class="modal-overlay" id="termsModal" hidden>
     <div
       class="modal legal-modal"
@@ -462,25 +460,24 @@
       </button>
 
       <span class="modal-kicker">LEGAL INFORMATION</span>
+
       <h2 id="termsTitle">Terms &amp; Privacy Policy</h2>
 
       <div class="legal-content">
         <p>
-          1. Cheapster.in is an independent affiliate directory and is NOT
-          affiliated with Amazon, Flipkart, or any listed brands.
+          1. Cheapster.in is an independent affiliate directory and is
+          NOT affiliated with Amazon, Flipkart, or any listed brands.
         </p>
 
         <p>
-          2. We collect your Name and WhatsApp number strictly for giveaway
-          contact purposes.
+          2. We collect your Name and WhatsApp number strictly for
+          giveaway contact purposes.
         </p>
       </div>
     </div>
   </div>
 
-  <!-- =========================
-       CONTACT US MODAL
-  ========================== -->
+  <!-- CONTACT -->
   <div class="modal-overlay" id="contactModal" hidden>
     <div
       class="modal contact-modal"
@@ -498,17 +495,20 @@
       </button>
 
       <span class="modal-kicker">WE'RE HERE TO HELP</span>
+
       <h2 id="contactTitle">Contact Us</h2>
 
       <p class="modal-subtitle">
-        Have a question, issue, or partnership request? Reach out to our
-        support team.
+        Have a question, issue, or partnership request?
+        Reach out to our support team.
       </p>
 
       <div class="contact-email-card">
         <div class="contact-card-icon">✉</div>
+
         <div>
           <span>Email Support</span>
+
           <a href="mailto:support@cheapster.in">
             Email: support@cheapster.in
           </a>
@@ -522,6 +522,7 @@
       <form id="contactForm" novalidate>
         <div class="form-group">
           <label for="contactName">Name</label>
+
           <input
             type="text"
             id="contactName"
@@ -531,11 +532,16 @@
             autocomplete="name"
             required
           />
-          <small class="field-error" id="contactNameError"></small>
+
+          <small
+            class="field-error"
+            id="contactNameError"
+          ></small>
         </div>
 
         <div class="form-group">
           <label for="contactIssue">Select Issue</label>
+
           <select id="contactIssue" name="contactIssue" required>
             <option value="">Choose an issue</option>
             <option value="Missing Payout">Missing Payout</option>
@@ -543,11 +549,16 @@
             <option value="Partnership">Partnership</option>
             <option value="Other">Other</option>
           </select>
-          <small class="field-error" id="contactIssueError"></small>
+
+          <small
+            class="field-error"
+            id="contactIssueError"
+          ></small>
         </div>
 
         <div class="form-group">
           <label for="contactMessage">Message</label>
+
           <textarea
             id="contactMessage"
             name="contactMessage"
@@ -556,7 +567,11 @@
             placeholder="Tell us how we can help..."
             required
           ></textarea>
-          <small class="field-error" id="contactMessageError"></small>
+
+          <small
+            class="field-error"
+            id="contactMessageError"
+          ></small>
         </div>
 
         <button
@@ -569,7 +584,6 @@
     </div>
   </div>
 
-  <!-- Firebase v9+ modular setup -->
   <script type="module" src="script.js"></script>
 </body>
 </html>
