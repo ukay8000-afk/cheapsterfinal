@@ -1626,3 +1626,47 @@ img {
   color: #aaaaaa;
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
+
+/* OFFER BANNER STYLES */
+.hero-offer-banner {
+    background: rgba(212, 175, 55, 0.1);
+    border: 1px solid #d4af37;
+    border-radius: 8px;
+    padding: 12px;
+    margin: 20px auto;
+    max-width: 800px;
+    text-align: center;
+    color: #fff;
+    backdrop-filter: blur(10px);
+}
+.live-pulse {
+    color: #ff4757;
+    font-weight: bold;
+    animation: pulse 1.5s infinite;
+    margin-right: 10px;
+}
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+.gold-text {
+    color: #d4af37;
+    margin-bottom: 10px;
+}
+.steps-box {
+    background: rgba(0, 0, 0, 0.5);
+    border-left: 3px solid #d4af37;
+    padding: 15px;
+    margin: 15px 0;
+    text-align: left;
+}
+.legal-disclaimer {
+    font-size: 0.85em;
+    color: #aaa;
+    text-align: left;
+    margin-bottom: 20px;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 5px;
+}
