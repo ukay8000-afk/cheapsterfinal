@@ -1,3 +1,18 @@
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  /* GPU acceleration ke liye yeh zaroori hai */
+  -webkit-overflow-scrolling: touch;
+  transform: translateZ(0);
+}
+
+/* Store cards par hardware acceleration */
+.store-card {
+  will-change: transform;
+}
+
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=DM+Sans:wght@400;500;600;700&display=swap');
 :root {
   --bg: #050d1a;
