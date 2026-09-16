@@ -1,5 +1,5 @@
 // =========================================================
-// FULL 77+ GEN-Z & PREMIUM BRANDS DIRECTORY (FULLY RESTORED)
+// FULL 75+PREMIUM BRANDS DIRECTORY (FULLY RESTORED)
 // =========================================================
 
 const stores = [
