@@ -3,38 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cheapster.in - Premium Shopping Destination</title>
+    <title>Cheapster.in - Official Directory</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- Sticky Glass Header -->
     <header class="glass-header">
         <div class="logo">Cheapster<span>.in</span></div>
         <div class="header-actions">
-            <button id="headerOfferBtn" class="gold-btn glow">🎁 Diwali Offer</button>
-            <button id="authBtn" class="outline-btn">Login</button>
+            <button id="headerOfferBtn" class="white-btn glow">🎁 Offer</button>
+            <button id="authBtn" class="icon-btn" title="Login with Google">
+                <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+            </button>
         </div>
     </header>
 
-    <!-- Hero Section -->
     <main class="container">
         <div class="search-section">
-            <h1>Shop Smart. Win Big.</h1>
-            <p>India's Premium Shopping Destination</p>
+            <p class="support-text">Need assistance? <a href="#" id="linkContactTop">Contact Support</a></p>
+            <h1>India's Independent Affiliate Directory.</h1>
+            <p>Explore official brands and track your rewards.</p>
             <input type="text" id="searchInput" placeholder="Search brands (e.g., Amazon, Myntra)..." class="glass-input search-box">
         </div>
-
-        <!-- Stores Grid -->
         <div class="grid" id="storeGrid"></div>
     </main>
 
-    <!-- Footer -->
     <footer class="glass-footer">
         <div class="footer-links">
-            <a href="#" id="linkContest">Contest Details</a>
-            <a href="#" id="linkPayout">Payout & Legal Policies</a>
-            <a href="https://wa.me/919999999999?text=Hi%20Cheapster%20Support,%20I%20need%20help." target="_blank">WhatsApp Support</a>
+            <a href="#" id="linkOfferDetails">Offer Details</a>
+            <a href="#" id="linkPayout">Legal & Payout</a>
+            <a href="#" id="linkAbout">About Us</a>
+            <a href="#" id="linkTerms">Terms of Use</a>
+            <a href="#" id="linkContact">Contact Us</a>
         </div>
         <p class="copyright">© 2026 Cheapster.in. All Rights Reserved.</p>
     </footer>
@@ -45,11 +45,11 @@
     <div id="welcomeModal" class="modal-overlay">
         <div class="modal-content glass-card center-text">
             <h2>🎉 Diwali Mega Offer is LIVE!</h2>
-            <p>Shop from your favorite brands and <strong>1000+ lucky users</strong> will win a <strong>50% Shopping Reward</strong> on their order amount!</p>
+            <p style="margin-top: 10px; color: #d0d0d0;">Shop from your favorite brands and <strong>1000+ lucky users</strong> will win a <strong>50% Shopping Reward</strong> on their order amount!</p>
             <div class="highlight-box">
                 No Order ID needed to participate! Just shop, enter your total order amount in our claim form, and we will verify via WhatsApp if you are selected.
             </div>
-            <button id="continueBtn" class="outline-btn full-width mt-15">Continue Shopping</button>
+            <button id="continueBtn" class="white-btn full-width mt-15">Continue Shopping</button>
         </div>
     </div>
 
@@ -57,11 +57,11 @@
     <div id="formModal" class="modal-overlay">
         <div class="modal-content glass-card">
             <span class="close-btn" id="closeForm">&times;</span>
-            <h2>Claim Your Reward</h2>
-            <p class="sub-text">Enter your details to participate in the Diwali Mega Offer.</p>
+            <h2>Claim Entry</h2>
+            <p class="sub-text" style="margin-bottom: 15px; font-size: 13px; color: var(--text-muted);">Enter details to participate in the Diwali Offer.</p>
             <form id="rewardForm">
                 <input type="text" id="fullName" placeholder="Full Name" required class="glass-input">
-                <input type="tel" id="whatsapp" placeholder="WhatsApp Number" required class="glass-input" pattern="[0-9]{10}" title="Enter 10 digit WhatsApp number">
+                <input type="tel" id="whatsapp" placeholder="WhatsApp Number" required class="glass-input" pattern="[0-9]{10}" title="10 digit number">
                 <select id="brandSelect" required class="glass-input">
                     <option value="" disabled selected>Select Brand</option>
                     <option value="Amazon">Amazon</option>
@@ -69,11 +69,11 @@
                     <option value="Myntra">Myntra</option>
                     <option value="Ajio">Ajio</option>
                     <option value="Nykaa">Nykaa</option>
+                    <option value="Croma">Croma</option>
                 </select>
                 <input type="number" id="orderAmount" placeholder="Total Order Amount (₹)" required class="glass-input" min="1">
-                
-                <p class="disclaimer">Disclaimer: This offer is exclusively sponsored by Cheapster.in and is not affiliated with any listed brands.</p>
-                <button type="submit" class="gold-btn full-width glow">Submit Entry</button>
+                <p class="disclaimer">Sponsored by Cheapster.in. Independent of listed brands.</p>
+                <button type="submit" class="white-btn full-width glow">Submit</button>
             </form>
         </div>
     </div>
@@ -85,19 +85,19 @@
             <h2>Diwali Mega Offer</h2>
             <div class="modal-body">
                 <h3>How it works:</h3>
-                <ul>
+                <ul style="padding-left: 20px; color: #d0d0d0; font-size: 14px; line-height: 1.5;">
                     <li>Click "Shop Now" on any brand card and complete your purchase on their official app/website.</li>
                     <li>Return here and fill out the reward claim form with your order amount.</li>
                     <li>1000+ lucky winners will be selected for a 50% shopping reward!</li>
                 </ul>
                 <h3>Sponsorship Disclaimer:</h3>
                 <p>This contest is strictly sponsored and managed by Cheapster.in. We are an independent directory and are not endorsed by, or affiliated with Amazon, Flipkart, or any other displayed brands.</p>
-                <button id="openFormFromDetails" class="gold-btn full-width mt-15">Claim Reward Now</button>
+                <button id="openFormFromDetails" class="white-btn full-width mt-15">Claim Reward Now</button>
             </div>
         </div>
     </div>
 
-    <!-- 4. Payout & Detailed Legal Modal (Bulletproof) -->
+    <!-- 4. Payout & Legal Policy Modal -->
     <div id="policyModal" class="modal-overlay">
         <div class="modal-content glass-card scrollable-modal">
             <span class="close-btn">&times;</span>
@@ -105,23 +105,65 @@
             <div class="modal-body">
                 <h3>1. Sponsorship & Affiliation</h3>
                 <p>The "Diwali Mega Offer" and all associated rewards are solely sponsored, administered, and funded by <strong>Cheapster.in</strong>. This program is strictly independent and is <strong>NOT</strong> endorsed by, sponsored by, or affiliated with Amazon, Flipkart, Myntra, or any other brands listed on this directory.</p>
-
+                
                 <h3>2. Fraud Prevention & Payout Rule</h3>
                 <p>To ensure a fair ecosystem and prevent order-cancellation fraud, all payouts are strictly subject to a verification period. Rewards will be disbursed ONLY after the respective brand's official return/exchange window for the winning order has successfully closed. Cancelled, returned, or partially refunded orders will result in immediate disqualification.</p>
-
+                
                 <h3>3. Verification Process</h3>
                 <p>Selected winners will be contacted exclusively via our official WhatsApp support number. Users must provide their official Merchant Order ID at that time for secure backend verification. We will never ask for banking passwords, UPI PINs, or OTPs.</p>
-
+                
                 <h3>4. State Laws & Eligibility</h3>
                 <p>This promotional contest is subject to all applicable federal, state, and local laws of India. <strong>It is void where prohibited by law.</strong> Residents of states with specific restrictions on luck-based contests (including but not limited to Tamil Nadu, Andhra Pradesh, Telangana, Assam, Odisha, Sikkim, and Nagaland) are not eligible to participate.</p>
-
+                
                 <h3>5. Data Privacy</h3>
                 <p>Your name and WhatsApp number are collected securely and used solely for winner notification and verification. We strictly do not sell, rent, or share your personal data with third-party marketing agencies.</p>
             </div>
         </div>
     </div>
 
-    <!-- Firebase SDK Placeholders & Main Script -->
+    <!-- 5. Contact Modal -->
+    <div id="contactModal" class="modal-overlay">
+        <div class="modal-content glass-card scrollable-modal">
+            <span class="close-btn">&times;</span>
+            <h2>Contact Us</h2>
+            <div class="modal-body">
+                <p style="text-align: center; font-size: 15px;">Email: <strong>support@cheapster.in</strong></p>
+                <hr style="border-color: rgba(255,255,255,0.1); margin: 20px 0;">
+                <p style="margin-bottom: 15px; font-size: 14px; text-align: center; color: var(--text-muted);">Or send us a message directly via WhatsApp:</p>
+                <form id="contactForm">
+                    <input type="text" id="contactName" placeholder="Your Name" required class="glass-input">
+                    <textarea id="contactIssue" placeholder="Describe your issue..." required class="glass-input" rows="3"></textarea>
+                    <button type="submit" class="white-btn full-width">Send via WhatsApp</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 6. About Us Modal -->
+    <div id="aboutModal" class="modal-overlay">
+        <div class="modal-content glass-card scrollable-modal">
+            <span class="close-btn">&times;</span>
+            <h2>About Us</h2>
+            <div class="modal-body">
+                <p>Cheapster.in is an independent affiliate directory built for the Indian market. Our mission is to provide a clean, premium, and lightning-fast portal for users to discover and shop from top e-commerce brands.</p>
+                <p>We believe in transparent rewards and secure shopping experiences, which is why we run verified giveaways exclusively for our community members.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 7. Terms of Use Modal -->
+    <div id="termsModal" class="modal-overlay">
+        <div class="modal-content glass-card scrollable-modal">
+            <span class="close-btn">&times;</span>
+            <h2>Terms of Use</h2>
+            <div class="modal-body">
+                <p>By accessing Cheapster.in, you agree to be bound by these Terms of Use. We provide an independent directory of third-party shopping links.</p>
+                <p>We are not responsible for the products, delivery, or customer service of the brands listed. Any purchases made through our platform are subject to the respective brand's official terms and conditions.</p>
+                <p>We reserve the right to modify or terminate promotional offers at our sole discretion to maintain the integrity of our platform.</p>
+            </div>
+        </div>
+    </div>
+
     <script type="module" src="script.js"></script>
 </body>
 </html>
