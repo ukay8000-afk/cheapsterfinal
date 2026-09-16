@@ -1,5 +1,5 @@
 // =========================================================
-// FULL 85+ GEN-Z & PREMIUM BRANDS DIRECTORY WITH SMART FALLBACKS
+// FULL 77+ GEN-Z & PREMIUM BRANDS DIRECTORY (FULLY RESTORED)
 // =========================================================
 
 const stores = [
@@ -9,7 +9,7 @@ const stores = [
   { name: "Myntra", domain: "myntra.com", logo: "https://upload.wikimedia.org/wikipedia/commons/b/bc/Myntra_Logo.png", description: "Fashion & lifestyle", link: "#" },
   { name: "AJIO", domain: "ajio.com", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/AJIO_Logo.svg/2560px-AJIO_Logo.svg.png", description: "Fashion destination", link: "#" },
   { name: "Tata CLiQ", domain: "tatacliq.com", logo: "https://upload.wikimedia.org/wikipedia/commons/e/e3/Tata_CLiQ_Logo.svg", description: "Multi-category retail", link: "#" },
-  { name: "Meesho", domain: "meesho.com", description: "Value shopping", link: "#" },
+  { name: "Meesho", domain: "meesho.com", logo: "https://images.crunchbase.com/image/upload/c_lpad,h_170,w_170,f_auto,b_white,q_auto:eco,dpr_1/v1491901328/ubc2vuzr4q3qvxzn8s6z.png", description: "Value shopping", link: "#" },
   { name: "Nike", domain: "nike.com", logo: "https://upload.wikimedia.org/wikipedia/commons/a/a6/Logo_NIKE.svg", description: "Sports & streetwear", link: "#" },
   { name: "Puma", domain: "puma.com", logo: "https://upload.wikimedia.org/wikipedia/en/d/d7/Puma_Logo.svg", description: "Athletic wear", link: "#" },
   { name: "Adidas", domain: "adidas.co.in", logo: "https://upload.wikimedia.org/wikipedia/commons/2/20/Adidas_Logo.svg", description: "Sports & fashion", link: "#" },
@@ -119,7 +119,6 @@ function renderStores(storeList) {
     const card = document.createElement("div");
     card.className = "store-card";
     
-    // Fallback chain: Direct Logo -> Clearbit API -> Initials Avatar
     const logoSrc = store.logo || `https://logo.clearbit.com/${store.domain}?size=100`;
 
     card.innerHTML = `
