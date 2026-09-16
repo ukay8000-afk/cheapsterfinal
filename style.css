@@ -1,18 +1,3 @@
-html {
-  scroll-behavior: smooth;
-}
-
-body {
-  /* GPU acceleration ke liye yeh zaroori hai */
-  -webkit-overflow-scrolling: touch;
-  transform: translateZ(0);
-}
-
-/* Store cards par hardware acceleration */
-.store-card {
-  will-change: transform;
-}
-
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=DM+Sans:wght@400;500;600;700&display=swap');
 :root {
   --bg: #050d1a;
@@ -46,20 +31,6 @@ body {
   min-height: 100vh;
   position: relative;
 }
-
-/* Ambient Glow Layers */
-.ambient {
-  position: fixed;
-  width: 450px;
-  height: 450px;
-  border-radius: 50%;
-  filter: blur(120px);
-  pointer-events: none;
-  z-index: -4;
-  opacity: .12;
-}
-.ambient-left { left: -200px; top: 10%; background: #82b1ff; }
-.ambient-right { right: -200px; top: 50%; background: #3b82f6; }
 
 body.modal-open { overflow: hidden; }
 button, input, select, textarea { font: inherit; outline:none; }
@@ -111,7 +82,6 @@ a { color: inherit; text-decoration: none; }
   box-shadow: 0 4px 20px rgba(130, 177, 255, 0.1);
 }
 .festive-sparkle { font-size: 14px; }
-
 .hero-copy { max-width: 600px; margin: 0 auto 30px; color: var(--muted); font-size: 14px; }
 
 /* Search */
@@ -141,7 +111,7 @@ a { color: inherit; text-decoration: none; }
 .shop-button { width: 100%; padding: 10px; border-radius: 10px; background: rgba(255,255,255,0.05); color: #fff; border: 1px solid var(--line); font-size: 12px; font-weight: 700; transition: .2s; }
 .store-card:hover .shop-button { background: #fff; color: #0b1a30; box-shadow: 0 0 15px rgba(255,255,255,0.4); }
 
-/* Modals */
+/* Modals & Dropdown Fix (Ensures option text is clearly visible) */
 .modal-overlay { position: fixed; inset: 0; z-index: 1000; background: rgba(4,10,20,0.85); backdrop-filter: blur(15px); display: grid; place-items: center; padding: 20px; }
 .premium-modal { position: relative; width: min(480px, 100%); padding: 30px; background: rgba(11, 26, 48, 0.95); border: 1px solid var(--gold-line); border-radius: var(--radius-modal); max-height: 90vh; overflow-y: auto; box-shadow: 0 25px 60px rgba(0,0,0,0.8); }
 .modal-close { position: absolute; top: 15px; right: 20px; font-size: 28px; background: transparent; border: none; color: var(--muted); }
@@ -153,6 +123,14 @@ a { color: inherit; text-decoration: none; }
 .field { margin-bottom: 15px; }
 .field label { display: block; font-size: 11px; color: var(--muted); margin-bottom: 5px; font-weight: 700; }
 .field input, .field select, .field textarea { width: 100%; padding: 12px 14px; border-radius: 10px; background: rgba(255,255,255,0.03); border: 1px solid var(--line); color: #fff; font-family: inherit; font-size: 14px;}
+
+/* FIX FOR SELECT DROPDOWN */
+.field select option {
+  background-color: #0b1a30;
+  color: #ffffff;
+  padding: 10px;
+}
+
 .btn-wide { width: 100%; min-height: 48px; border-radius: 12px; }
 .form-note { text-align: center; font-size: 10px; color: var(--faint); margin-top: 15px; }
 .legal-copy p { font-size: 13px; margin-bottom: 15px; line-height: 1.6;}
