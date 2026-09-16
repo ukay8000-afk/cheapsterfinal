@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#090909">
+  <meta name="theme-color" content="#0b1a30">
   <meta name="description" content="Cheapster.in — a premium independent directory for shopping, travel, beauty, electronics, AI and more.">
   <title>Cheapster.in — Shop Smart. Discover More.</title>
 
@@ -20,26 +20,33 @@
 
   <!-- HEADER -->
   <header class="site-header" id="siteHeader">
+    <!-- PREMIUM LIVE CONTEST BADGE -->
+    <div class="live-contest-banner">
+      <div class="blinking-dot"></div>
+      Contest is live
+    </div>
+    
     <div class="header-inner">
       <a class="brand" href="#" aria-label="Cheapster.in home">
-        <span class="brand-symbol">C</span>
+        <!-- CUSTOM CSS LOGO -->
+        <div class="css-logo">C<span>.</span></div>
         <span class="brand-wordmark">Cheapster<span>.in</span></span>
       </a>
 
       <div class="header-actions">
         <button class="btn btn-gold header-offer-btn" id="headerOfferBtn" type="button">
-          <span class="btn-icon">✦</span>
-          <span>Claim Giveaway</span>
+          <span class="btn-icon">🎁</span>
+          <span class="offer-text-hide">Claim Giveaway</span>
         </button>
 
-        <button class="btn btn-google" id="authBtn" type="button">
+        <button class="btn btn-google" id="authBtn" type="button" title="Login with Google">
           <svg class="google-icon" viewBox="0 0 24 24" aria-hidden="true">
             <path fill="#4285F4" d="M21.35 12.27c0-.79-.07-1.54-.23-2.27H12v4.3h5.24a4.48 4.48 0 0 1-1.95 2.94v2.44h3.15c1.85-1.7 2.91-4.2 2.91-7.41z"/>
             <path fill="#34A853" d="M12 21.5c2.65 0 4.87-.88 6.49-2.38l-3.15-2.44c-.88.59-2 .94-3.34.94-2.57 0-4.74-1.73-5.52-4.06H3.23V16.1A9.8 9.8 0 0 0 12 21.5z"/>
             <path fill="#FBBC05" d="M6.48 13.56A5.9 5.9 0 0 1 6.17 12c0-.54.11-1.07.31-1.56V8H3.23A9.5 9.5 0 0 0 2.2 12c0 1.53.37 2.97 1.03 4.25l3.25-2.69z"/>
             <path fill="#EA4335" d="M12 6.38c1.44 0 2.73.5 3.75 1.48l2.81-2.81C16.86 3.44 14.64 2.5 12 2.5a9.8 9.8 0 0 0-8.77 5.5l3.25 2.44C7.26 8.11 9.43 6.38 12 6.38z"/>
           </svg>
-          <span id="authBtnText">Login with Google</span>
+          <span id="authBtnText">Login</span>
         </button>
       </div>
     </div>
@@ -55,13 +62,12 @@
         </div>
 
         <h1>
-          Discover the brands<br>
-          <span>worth your click.</span>
+          Explore the brands<br>
+          <span>you already love.</span>
         </h1>
 
         <p class="hero-copy">
-          Shop, travel, create, build and save with a curated collection
-          of leading brands — all in one premium destination.
+          Shop your favorite Gen-Z fashion, quick-commerce, and tech brands. Participate in exclusive rewards backed by a premium directory.
         </p>
 
         <div class="search-shell">
@@ -72,35 +78,16 @@
             </svg>
           </span>
 
-          <input
-            id="searchInput"
-            class="search-input"
-            type="search"
-            autocomplete="off"
-            placeholder="Search Amazon, Lenskart, ChatGPT..."
-            aria-label="Search brands"
-          >
-
+          <input id="searchInput" class="search-input" type="search" autocomplete="off" placeholder="Search Snitch, Zepto, Myntra..." aria-label="Search brands">
           <span class="search-hint">⌘ K</span>
-
-          <button
-            id="clearSearch"
-            class="search-clear"
-            type="button"
-            aria-label="Clear search"
-            hidden
-          >×</button>
         </div>
 
         <div class="hero-meta">
-          <span><strong id="heroStoreCount">0</strong> curated brands</span>
+          <span><strong id="heroStoreCount">0</strong> trending brands</span>
           <span class="meta-dot"></span>
-          <span>One premium directory</span>
+          <span>One secure portal</span>
         </div>
       </div>
-
-      <div class="hero-orbit hero-orbit-one" aria-hidden="true"></div>
-      <div class="hero-orbit hero-orbit-two" aria-hidden="true"></div>
     </section>
 
     <!-- DIRECTORY -->
@@ -108,17 +95,16 @@
       <div class="section-top">
         <div>
           <span class="section-label">THE DIRECTORY</span>
-          <h2>Explore everything</h2>
+          <h2>Top Deals & Platforms</h2>
         </div>
         <div class="result-pill" id="resultPill">0 brands</div>
       </div>
 
       <div class="store-grid" id="storeGrid"></div>
-
+      
       <div class="empty-state" id="emptyState" hidden>
-        <div class="empty-state-icon">⌕</div>
         <h3>No matching brands</h3>
-        <p>Try another search term and discover something new.</p>
+        <p>Try searching for trending brands like Nike, Snitch, or Blinkit.</p>
       </div>
     </section>
   </main>
@@ -128,217 +114,96 @@
     <div class="footer-main">
       <div class="footer-brand-block">
         <a class="brand" href="#">
-          <span class="brand-symbol">C</span>
+          <div class="css-logo" style="width:28px;height:28px;font-size:16px;">C<span>.</span></div>
           <span class="brand-wordmark">Cheapster<span>.in</span></span>
         </a>
-        <p>
-          A polished independent directory for discovering stores,
-          services, travel platforms and digital brands.
-        </p>
+        <p>A premium independent directory for discovering India's top fashion, beauty, electronics, and lifestyle brands.</p>
       </div>
 
       <div class="footer-nav">
-        <button type="button" data-modal-target="aboutModal">About Us</button>
-        <button type="button" data-modal-target="policyModal">Giveaway &amp; Payout Policy</button>
-        <button type="button" data-modal-target="termsModal">Terms &amp; Privacy</button>
-        <button type="button" data-modal-target="contactModal">Contact Us</button>
+        <button type="button" data-info-modal="aboutModal">About Us</button>
+        <button type="button" data-info-modal="policyModal">Giveaway & Payout Policy</button>
+        <button type="button" data-info-modal="termsModal">Terms & Privacy</button>
+        <button type="button" data-info-modal="contactModal">Contact Us</button>
       </div>
-    </div>
-
-    <div class="footer-bottom">
-      <span>© <span id="currentYear"></span> Cheapster.in</span>
-      <span>Independent affiliate directory</span>
     </div>
   </footer>
 
-  <!-- WELCOME -->
+  <!-- WELCOME POPUP -->
   <div class="modal-overlay" id="welcomeModal" hidden>
-    <div class="modal premium-modal welcome-modal" role="dialog" aria-modal="true" aria-labelledby="welcomeTitle">
+    <div class="modal premium-modal welcome-modal" role="dialog" aria-modal="true">
       <button class="modal-close" type="button" data-close-modal="welcomeModal" aria-label="Close">×</button>
-
-      <div class="modal-icon spotlight-icon">✦</div>
       <span class="modal-label">WELCOME TO CHEAPSTER.IN</span>
-
-      <h2 id="welcomeTitle">Something rewarding<br><span>is waiting.</span></h2>
-
-      <p>
-        Explore our curated brands, shop through Cheapster.in,
-        and enter the Diwali Mega Giveaway.
-      </p>
-
+      <h2 id="welcomeTitle">The Diwali Mega Offer<br><span>is LIVE.</span></h2>
+      <p>Shop from any brand in our directory, enter your order amount, and <strong>1000+ lucky users</strong> will win a 50% Shopping Reward!</p>
       <div class="welcome-highlight">
         <span class="highlight-star">✧</span>
         <div>
-          <strong>Shop through the directory.</strong>
-          <small>Then submit your giveaway entry from the claim form.</small>
+          <strong>No Order ID required upfront.</strong>
+          <small>Verification happens securely via WhatsApp if you are selected.</small>
         </div>
       </div>
-
-      <button class="btn btn-gold btn-wide" id="continueBtn" type="button">
-        Continue Shopping
-        <span>→</span>
-      </button>
+      <button class="btn btn-gold btn-wide" id="continueBtn" type="button">Explore Directory</button>
     </div>
   </div>
 
-  <!-- GIVEAWAY FORM -->
+  <!-- GIVEAWAY FORM (100% Legal) -->
   <div class="modal-overlay" id="formModal" hidden>
-    <div class="modal premium-modal" role="dialog" aria-modal="true" aria-labelledby="formTitle">
+    <div class="modal premium-modal" role="dialog" aria-modal="true">
       <button class="modal-close" type="button" data-close-modal="formModal" aria-label="Close">×</button>
-
       <div class="modal-icon">🎁</div>
       <span class="modal-label">EXCLUSIVE EVENT</span>
-
-      <h2 id="formTitle">Diwali Mega Giveaway! 🎉</h2>
-      <p class="modal-intro">
-        Submit your details after completing your purchase.
-      </p>
-
-      <div class="login-notice" id="loginNotice">
-        <div class="notice-symbol">G</div>
-        <div>
-          <strong>Google sign-in required</strong>
-          <span>Login before submitting your giveaway entry.</span>
-        </div>
-      </div>
-
+      <h2 id="formTitle">Claim Reward Entry</h2>
+      
       <form id="rewardForm" novalidate>
         <div class="field">
           <label for="fullName">Full Name</label>
-          <input id="fullName" type="text" autocomplete="name" maxlength="100" placeholder="Enter your full name" required>
-          <span class="field-error" id="fullNameError"></span>
+          <input id="fullName" type="text" autocomplete="name" placeholder="Enter your full name" required>
         </div>
-
         <div class="field">
           <label for="whatsapp">WhatsApp Number</label>
-          <input id="whatsapp" type="tel" inputmode="numeric" autocomplete="tel" maxlength="10" placeholder="10-digit mobile number" required>
-          <span class="field-error" id="whatsappError"></span>
+          <input id="whatsapp" type="tel" inputmode="numeric" maxlength="10" placeholder="10-digit mobile number" required>
         </div>
-
         <div class="field">
-          <label for="brandSelect">Brand</label>
+          <label for="brandSelect">Purchased Brand</label>
           <select id="brandSelect" required>
-            <option value="">Select purchased brand</option>
+            <option value="">Select a brand</option>
           </select>
-          <span class="field-error" id="brandError"></span>
         </div>
-
         <div class="field">
-          <label for="orderId">Store Order ID</label>
-          <input id="orderId" type="text" maxlength="140" placeholder="Enter your order ID" required>
-          <span class="field-error" id="orderIdError"></span>
+          <label for="orderAmount">Total Order Amount (₹)</label>
+          <input id="orderAmount" type="number" min="1" placeholder="e.g. 1500" required>
         </div>
-
-        <button class="btn btn-gold btn-wide submit-btn" id="submitRewardBtn" type="submit">
-          <span class="submit-label">Submit Entry</span>
-          <span class="spinner" hidden></span>
-        </button>
-
-        <p class="form-note">
-          Cheapster.in is an independent affiliate directory.
-        </p>
+        <button class="btn btn-gold btn-wide submit-btn" id="submitRewardBtn" type="submit">Submit Entry</button>
+        <p class="form-note">Cheapster.in is an independent directory. Not affiliated with listed brands.</p>
       </form>
 
       <div class="success-view" id="successView" hidden>
-        <div class="success-mark">✓</div>
         <h3>Entry submitted</h3>
-        <p>Your giveaway entry has been received successfully.</p>
-        <button class="btn btn-ghost btn-wide" type="button" data-close-modal="formModal">Done</button>
+        <p>Your entry is received. If selected, we will verify your exact Order ID via WhatsApp.</p>
+        <button class="btn btn-gold btn-wide" type="button" data-close-modal="formModal">Done</button>
       </div>
     </div>
   </div>
 
-  <!-- ABOUT -->
-  <div class="modal-overlay" id="aboutModal" hidden>
-    <div class="modal premium-modal legal-modal" role="dialog" aria-modal="true" aria-labelledby="aboutTitle">
-      <button class="modal-close" type="button" data-close-modal="aboutModal" aria-label="Close">×</button>
-      <span class="modal-label">CHEAPSTER.IN</span>
-      <h2 id="aboutTitle">About Us</h2>
-      <div class="legal-copy">
-        <p>Welcome to Cheapster.in, India's most rewarding affiliate directory. Our mission is simple: to help you find the best platforms for your shopping needs while giving you a chance to win incredible rewards.</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- POLICY -->
+  <!-- POLICY (Detailed & Bulletproof) -->
   <div class="modal-overlay" id="policyModal" hidden>
-    <div class="modal premium-modal legal-modal" role="dialog" aria-modal="true" aria-labelledby="policyTitle">
+    <div class="modal premium-modal legal-modal" role="dialog" aria-modal="true">
       <button class="modal-close" type="button" data-close-modal="policyModal" aria-label="Close">×</button>
-      <span class="modal-label">TRANSPARENT &amp; SIMPLE</span>
-      <h2 id="policyTitle">Giveaway &amp; Payout Policy</h2>
+      <h2>Giveaway & Payout Policy</h2>
       <div class="legal-copy">
-        <p><strong>DIWALI MEGA GIVEAWAY:</strong> Shop through Cheapster.in and stand a chance to win 100% of your order value!</p>
-        <p><strong>HOW IT WORKS:</strong> 1. Click 'Shop Now'. 2. Complete purchase. 3. Fill the Claim form.</p>
-        <p><strong>IMPORTANT PAYOUT RULE:</strong> To prevent order-cancellation fraud, all giveaway payouts are processed ONLY after the official 15-30 day return window of the respective store has closed.</p>
+        <p><strong>1. Sponsorship:</strong> The "Diwali Mega Offer" is solely sponsored by Cheapster.in. It is NOT endorsed by any listed brand.</p>
+        <p><strong>2. Payout Rule:</strong> To prevent fraud, payouts are strictly subject to a verification period. Rewards are disbursed ONLY after the brand's official return window has closed. Cancelled orders are disqualified.</p>
+        <p><strong>3. Verification:</strong> Winners are contacted via WhatsApp to provide their official Merchant Order ID for secure verification.</p>
+        <p><strong>4. State Laws:</strong> This contest is void where prohibited (e.g., Tamil Nadu, Telangana, etc.).</p>
       </div>
     </div>
   </div>
 
-  <!-- TERMS -->
-  <div class="modal-overlay" id="termsModal" hidden>
-    <div class="modal premium-modal legal-modal" role="dialog" aria-modal="true" aria-labelledby="termsTitle">
-      <button class="modal-close" type="button" data-close-modal="termsModal" aria-label="Close">×</button>
-      <span class="modal-label">LEGAL INFORMATION</span>
-      <h2 id="termsTitle">Terms &amp; Privacy Policy</h2>
-      <div class="legal-copy">
-        <p>1. Cheapster.in is an independent affiliate directory and is NOT affiliated with Amazon, Flipkart, or any listed brands.</p>
-        <p>2. We collect your Name and WhatsApp number strictly for giveaway contact purposes.</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- CONTACT -->
-  <div class="modal-overlay" id="contactModal" hidden>
-    <div class="modal premium-modal contact-modal" role="dialog" aria-modal="true" aria-labelledby="contactTitle">
-      <button class="modal-close" type="button" data-close-modal="contactModal" aria-label="Close">×</button>
-
-      <span class="modal-label">WE'RE HERE TO HELP</span>
-      <h2 id="contactTitle">Contact Us</h2>
-      <p class="modal-intro">Questions, bug reports, payout issues or partnership requests — reach out.</p>
-
-      <a class="support-card" href="mailto:support@cheapster.in">
-        <span class="support-icon">✉</span>
-        <span>
-          <small>Email Support</small>
-          <strong>support@cheapster.in</strong>
-        </span>
-        <span class="support-arrow">↗</span>
-      </a>
-
-      <div class="divider-label"><span>WHATSAPP SUPPORT</span></div>
-
-      <form id="contactForm" novalidate>
-        <div class="field">
-          <label for="contactName">Name</label>
-          <input id="contactName" type="text" maxlength="100" autocomplete="name" placeholder="Your name" required>
-          <span class="field-error" id="contactNameError"></span>
-        </div>
-
-        <div class="field">
-          <label for="contactIssue">Select Issue</label>
-          <select id="contactIssue" required>
-            <option value="">Choose an issue</option>
-            <option value="Missing Payout">Missing Payout</option>
-            <option value="Report Bug">Report Bug</option>
-            <option value="Partnership">Partnership</option>
-            <option value="Other">Other</option>
-          </select>
-          <span class="field-error" id="contactIssueError"></span>
-        </div>
-
-        <div class="field">
-          <label for="contactMessage">Message</label>
-          <textarea id="contactMessage" rows="5" maxlength="1200" placeholder="Tell us how we can help..." required></textarea>
-          <span class="field-error" id="contactMessageError"></span>
-        </div>
-
-        <button class="btn btn-gold btn-wide" type="submit">
-          Send via WhatsApp
-          <span>↗</span>
-        </button>
-      </form>
-    </div>
-  </div>
+  <!-- ABOUT, TERMS, CONTACT (Simplified Modals) -->
+  <div class="modal-overlay" id="aboutModal" hidden><div class="modal premium-modal legal-modal"><button class="modal-close" data-close-modal="aboutModal">×</button><h2>About Us</h2><div class="legal-copy"><p>Cheapster.in is an independent affiliate directory for the Indian market.</p></div></div></div>
+  <div class="modal-overlay" id="termsModal" hidden><div class="modal premium-modal legal-modal"><button class="modal-close" data-close-modal="termsModal">×</button><h2>Terms & Privacy</h2><div class="legal-copy"><p>We provide third-party links. Your data is used solely for winner notification.</p></div></div></div>
+  <div class="modal-overlay" id="contactModal" hidden><div class="modal premium-modal contact-modal"><button class="modal-close" data-close-modal="contactModal">×</button><h2>Contact Us</h2><div class="legal-copy"><p>Email: support@cheapster.in</p></div></div></div>
 
   <script type="module" src="script.js"></script>
 </body>
