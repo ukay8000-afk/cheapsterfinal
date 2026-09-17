@@ -136,7 +136,14 @@ function debounce(fn, delay = 160) {
 function buildLogoChain(store) {
   const chain = [];
   if (store.logo) chain.push(store.logo);
-  if (store.domain) chain.push(`https://www.google.com/s2/favicons?domain=${store.domain}&sz=128`);
+  if (store.domain) {
+    // apple-touch-icon is usually a proper high-res square logo when the
+    // site has one, and — unlike Google's service — a real 404 fires the
+    // <img> error event correctly, so we actually fall through instead of
+    // getting stuck showing a blurry generic icon.
+    chain.push(`https://${store.domain}/apple-touch-icon.png`);
+    chain.push(`https://www.google.com/s2/favicons?domain=${store.domain}&sz=128`);
+  }
   return chain;
 }
 
@@ -327,10 +334,30 @@ if (window.auth) {
       window.auth.signOut();
     } else {
       window.auth.signInWithPopup(window.googleProvider).catch((err) => {
-        console.error("Google sign-in failed:", err);
-        alert("Login failed, please try again.");
+        console.error("Google sign-in (popup) failed:", err.code, err.message);
+        // Popups are silently blocked in a lot of mobile browsers and in
+        // almost every in-app browser (Instagram/WhatsApp/Facebook webviews).
+        // When that happens, fall back to a full-page redirect flow instead
+        // of just failing — this is what makes login actually work on phones.
+        if (
+          err.code === "auth/popup-blocked" ||
+          err.code === "auth/operation-not-supported-in-this-environment" ||
+          err.code === "auth/popup-closed-by-user" ||
+          err.code === "auth/cancelled-popup-request"
+        ) {
+          window.auth.signInWithRedirect(window.googleProvider);
+        } else if (err.code === "auth/unauthorized-domain") {
+          alert("This domain isn't authorized for login yet (Firebase Console → Authentication → Settings → Authorized domains).");
+        } else {
+          alert("Login failed, please try again.");
+        }
       });
     }
+  });
+
+  // Catches the user coming back after signInWithRedirect above.
+  window.auth.getRedirectResult().catch((err) => {
+    if (err) console.error("Google sign-in (redirect) failed:", err.code, err.message);
   });
 
   window.auth.onAuthStateChanged((user) => {
@@ -354,7 +381,7 @@ if (window.auth) {
 // ---------- reward form → Google Sheet ----------
 
 // Paste your deployed Google Apps Script Web App URL here (see setup notes).
-const SHEET_WEBAPP_URL = "PASTE_YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE";
+const SHEET_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbzkm-E29yhdrAAP2wTmun0gpTUnctn8oS_rlcW0gHLdp_Qgvy-sEpErVs9rL0XPklc/exec";
 
 document.getElementById("rewardForm").addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -369,7 +396,6 @@ document.getElementById("rewardForm").addEventListener("submit", async (e) => {
     fullName: document.getElementById("fullName").value,
     whatsapp: document.getElementById("whatsapp").value,
     brand: document.getElementById("brandSelect").value,
-    orderAmount: document.getElementById("orderAmount").value,
     email: currentUser.email || "",
     uid: currentUser.uid || "",
     submittedAt: new Date().toISOString()
