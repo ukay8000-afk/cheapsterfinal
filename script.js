@@ -156,10 +156,9 @@ function attachLogoFallback(img, chain, store) {
 
 // ---------- rendering ----------
 
-function buildCard(store, index) {
+function buildCard(store) {
   const card = document.createElement("div");
   card.className = "store-card";
-  card.style.animationDelay = `${Math.min(index, 24) * 25}ms`;
 
   const frame = document.createElement("div");
   frame.className = "store-logo-frame";
@@ -210,7 +209,7 @@ function renderStores(storeList) {
   // Build off-DOM first, then attach once — a single reflow instead of one
   // per card.
   const fragment = document.createDocumentFragment();
-  storeList.forEach((store, i) => fragment.appendChild(buildCard(store, i)));
+  storeList.forEach(store => fragment.appendChild(buildCard(store)));
   grid.innerHTML = "";
   grid.appendChild(fragment);
 
@@ -310,6 +309,10 @@ if (header) {
   }, { passive: true });
 }
 
+// Sections render fully visible by default (see CSS). Only once we know
+// IntersectionObserver works do we "arm" them for the hide-then-reveal
+// effect — this way the animation can only ever add polish, never hide
+// content if something about the browser or device doesn't cooperate.
 const revealTargets = document.querySelectorAll(".reveal-on-scroll");
 if (revealTargets.length && "IntersectionObserver" in window) {
   const observer = new IntersectionObserver((entries) => {
@@ -320,9 +323,10 @@ if (revealTargets.length && "IntersectionObserver" in window) {
       }
     });
   }, { threshold: 0.15 });
-  revealTargets.forEach(el => observer.observe(el));
-} else {
-  revealTargets.forEach(el => el.classList.add("in-view"));
+  revealTargets.forEach(el => {
+    el.classList.add("reveal-armed");
+    observer.observe(el);
+  });
 }
 
 // ---------- init ----------
