@@ -381,7 +381,7 @@ if (window.auth) {
 // ---------- reward form → Google Sheet ----------
 
 // Paste your deployed Google Apps Script Web App URL here (see setup notes).
-const SHEET_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbzkm-E29yhdrAAP2wTmun0gpTUnctn8oS_rlcW0gHLdp_Qgvy-sEpErVs9rL0XPklc/exec";
+const SHEET_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbziQvJq8kqk-CAHRekAHjkSVEJkQmbBp84girc4vjfTPbY20VJl2hz_I-OC-bWBcjQf/exec";
 
 document.getElementById("rewardForm").addEventListener("submit", async (e) => {
   e.preventDefault();
