@@ -6,19 +6,25 @@
  *    - Execute as: Me
  *    - Who has access: Anyone
  * 4. Deploy, authorize when prompted, and copy the Web App URL it gives you
- *    (ends in /exec).
- * 5. Paste that URL into SHEET_WEBAPP_URL in script.js.
+ *    (ends in /exec). This is already wired into script.js.
  *
  * The first row of your sheet should have these headers (in this order),
  * or just leave the sheet empty and this script will add them for you:
- * Timestamp | Full Name | WhatsApp | Brand | Order Amount | Email | UID
+ * Timestamp | Full Name | WhatsApp | Brand | Email | UID
+ *
+ * NOTE: if you already ran an older version of this form (the one with an
+ * "Order Amount" field), your sheet's header row still has that extra
+ * column from before. Either delete that column from row 1, or just clear
+ * the whole sheet — new entries will re-add the correct headers on the
+ * next submission since the header row only gets written when the sheet
+ * is completely empty.
  */
 
 function doPost(e) {
   const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
 
   if (sheet.getLastRow() === 0) {
-    sheet.appendRow(["Timestamp", "Full Name", "WhatsApp", "Brand", "Order Amount", "Email", "UID"]);
+    sheet.appendRow(["Timestamp", "Full Name", "WhatsApp", "Brand", "Email", "UID"]);
   }
 
   const p = e.parameter;
@@ -27,7 +33,6 @@ function doPost(e) {
     p.fullName || "",
     p.whatsapp || "",
     p.brand || "",
-    p.orderAmount || "",
     p.email || "",
     p.uid || ""
   ]);
