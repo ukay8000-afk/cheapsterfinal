@@ -405,11 +405,15 @@ document.getElementById("rewardForm").addEventListener("submit", async (e) => {
   submitBtn.textContent = "Submitting...";
 
   try {
-    // URLSearchParams (not JSON) so this stays a "simple request" — Apps
-    // Script Web Apps don't handle CORS preflight, so a JSON body here
-    // would fail silently.
+    // mode: "no-cors" is required here — Apps Script Web Apps respond via a
+    // redirect to a googleusercontent.com URL that doesn't send CORS
+    // headers, so a normal fetch() throws a network error even when the
+    // row was written successfully. We don't need to read the response
+    // (we show our own success view), so we just fire the request and
+    // stop the browser from trying to read a response we don't need.
     await fetch(SHEET_WEBAPP_URL, {
       method: "POST",
+      mode: "no-cors",
       body: new URLSearchParams(payload)
     });
     document.getElementById("rewardForm").hidden = true;
