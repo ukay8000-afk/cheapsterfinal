@@ -315,10 +315,86 @@ document.getElementById("continueBtn").addEventListener("click", () => {
   closeModal("welcomeModal");
 });
 
-document.getElementById("rewardForm").addEventListener("submit", (e) => {
+// ---------- Google login (Firebase Auth) ----------
+
+const authBtn = document.getElementById("authBtn");
+const authBtnText = document.getElementById("authBtnText");
+let currentUser = null;
+
+if (window.auth) {
+  authBtn.addEventListener("click", () => {
+    if (currentUser) {
+      window.auth.signOut();
+    } else {
+      window.auth.signInWithPopup(window.googleProvider).catch((err) => {
+        console.error("Google sign-in failed:", err);
+        alert("Login failed, please try again.");
+      });
+    }
+  });
+
+  window.auth.onAuthStateChanged((user) => {
+    currentUser = user;
+    if (user) {
+      authBtnText.textContent = user.displayName ? user.displayName.split(" ")[0] : "Logout";
+      authBtn.title = "Logout";
+      const nameField = document.getElementById("fullName");
+      if (nameField && !nameField.value) nameField.value = user.displayName || "";
+    } else {
+      authBtnText.textContent = "Login";
+      authBtn.title = "Login with Google";
+    }
+  });
+} else {
+  // firebase-config.js didn't load / isn't set up yet — don't leave the
+  // button silently doing nothing; tell whoever's testing the site why.
+  authBtn.addEventListener("click", () => alert("Login isn't configured yet."));
+}
+
+// ---------- reward form → Google Sheet ----------
+
+// Paste your deployed Google Apps Script Web App URL here (see setup notes).
+const SHEET_WEBAPP_URL = "PASTE_YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE";
+
+document.getElementById("rewardForm").addEventListener("submit", async (e) => {
   e.preventDefault();
-  document.getElementById("rewardForm").hidden = true;
-  document.getElementById("successView").hidden = false;
+
+  if (!currentUser) {
+    alert("Please login with Google first, then submit your entry.");
+    return;
+  }
+
+  const submitBtn = document.getElementById("submitRewardBtn");
+  const payload = {
+    fullName: document.getElementById("fullName").value,
+    whatsapp: document.getElementById("whatsapp").value,
+    brand: document.getElementById("brandSelect").value,
+    orderAmount: document.getElementById("orderAmount").value,
+    email: currentUser.email || "",
+    uid: currentUser.uid || "",
+    submittedAt: new Date().toISOString()
+  };
+
+  submitBtn.disabled = true;
+  submitBtn.textContent = "Submitting...";
+
+  try {
+    // URLSearchParams (not JSON) so this stays a "simple request" — Apps
+    // Script Web Apps don't handle CORS preflight, so a JSON body here
+    // would fail silently.
+    await fetch(SHEET_WEBAPP_URL, {
+      method: "POST",
+      body: new URLSearchParams(payload)
+    });
+    document.getElementById("rewardForm").hidden = true;
+    document.getElementById("successView").hidden = false;
+  } catch (err) {
+    console.error("Sheet submission failed:", err);
+    alert("Something went wrong submitting your entry. Please try again.");
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.textContent = "Submit Entry";
+  }
 });
 
 document.getElementById("contactForm").addEventListener("submit", (e) => {
@@ -328,7 +404,7 @@ document.getElementById("contactForm").addEventListener("submit", (e) => {
   const message = document.getElementById("contactMessage").value;
 
   const text = encodeURIComponent(`Hi Cheapster Support,\nMy Name: ${name}\nIssue: ${issue}\n\nMessage:\n${message}`);
-  window.open(`https://wa.me/919999999999?text=${text}`, '_blank');
+  openStoreLink({ link: `https://wa.me/919999999999?text=${text}` }); // TODO: replace with your real WhatsApp business number
 });
 
 // ---------- premium touches: header shadow + scroll reveal ----------
