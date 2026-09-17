@@ -391,11 +391,26 @@ document.getElementById("rewardForm").addEventListener("submit", async (e) => {
     return;
   }
 
+  // 1. Asli Validation Yahan Hogi
+  const nameVal = document.getElementById("fullName").value.trim();
+  const phoneVal = document.getElementById("whatsapp").value.trim();
+  const brandVal = document.getElementById("brandSelect").value;
+
+  if (!nameVal || !phoneVal || !brandVal) {
+    alert("Please fill in all mandatory fields: Name, Phone Number, and Brand.");
+    return;
+  }
+
+  if (phoneVal.length < 10) {
+    alert("Please enter a valid 10-digit phone number.");
+    return;
+  }
+
   const submitBtn = document.getElementById("submitRewardBtn");
   const payload = {
-    fullName: document.getElementById("fullName").value,
-    whatsapp: document.getElementById("whatsapp").value,
-    brand: document.getElementById("brandSelect").value,
+    fullName: nameVal,
+    whatsapp: phoneVal,
+    brand: brandVal,
     email: currentUser.email || "",
     uid: currentUser.uid || "",
     submittedAt: new Date().toISOString()
