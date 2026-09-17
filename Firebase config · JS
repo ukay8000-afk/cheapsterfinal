@@ -1,15 +1,14 @@
 // ============================================================
-// FIREBASE CONFIG — replace every value below with your own,
-// from: Firebase Console → Project settings → your web app → SDK setup.
-// Also: Authentication → Sign-in method → enable "Google".
+// FIREBASE CONFIG
 // ============================================================
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT_ID.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyAkmyH4pJWH-0MtdZ-RuEQLeSietZKwRTc",
+  authDomain: "cheapster-4e4a1.firebaseapp.com",
+  projectId: "cheapster-4e4a1",
+  storageBucket: "cheapster-4e4a1.firebasestorage.app",
+  messagingSenderId: "406157986484",
+  appId: "1:406157986484:web:ac118992d67b52d82ce5e1",
+  measurementId: "G-69933BBTXY"
 };
 
 firebase.initializeApp(firebaseConfig);
