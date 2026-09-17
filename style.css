@@ -165,7 +165,7 @@ a { color: inherit; text-decoration: none; }
 .store-card:hover { transform: translateY(-5px); border-color: var(--line-gold); background: var(--panel-solid-hover); box-shadow: 0 16px 34px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(91, 158, 234, 0.15); }
 
 .store-logo-frame { width: 66px; height: 66px; margin: 0 auto 15px; background: #fff; border-radius: 14px; padding: 10px; display: grid; place-items: center; box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35); }
-.store-logo { max-width: 100%; max-height: 100%; object-fit: contain; }
+.store-logo { width: 100%; height: 100%; max-width: 100%; max-height: 100%; object-fit: contain; object-position: center center; }
 .store-logo-fallback { width: 100%; height: 100%; display: grid; place-items: center; background: linear-gradient(135deg, var(--sapphire), var(--sapphire-glow)); color: #fff; font-size: 17px; font-weight: 800; border-radius: 10px; }
 
 .store-name { color: var(--ink); font-size: 15px; font-weight: 700; margin: 0 0 5px; }
