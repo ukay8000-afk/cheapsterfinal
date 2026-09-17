@@ -1,5 +1,7 @@
 // =========================================================
-// FULL 75+PREMIUM BRANDS DIRECTORY (FULLY RESTORED)
+// CHEAPSTER.IN — 77+ BRANDS DIRECTORY
+// Rebuilt for premium feel + speed: DOM-node rendering,
+// debounced search, layered logo fallback, scroll reveal.
 // =========================================================
 
 const stores = [
@@ -108,52 +110,126 @@ const heroStoreCount = document.getElementById("heroStoreCount");
 const emptyState = document.getElementById("emptyState");
 const brandSelect = document.getElementById("brandSelect");
 
+// ---------- utilities ----------
+
 function initials(name) {
   return name.substring(0, 2).toUpperCase();
 }
 
-function renderStores(storeList) {
-  grid.innerHTML = "";
-  
-  storeList.forEach(store => {
-    const card = document.createElement("div");
-    card.className = "store-card";
-    
-    const logoSrc = store.logo || `https://logo.clearbit.com/${store.domain}?size=100`;
-
-    card.innerHTML = `
-      <div class="store-logo-frame">
-        <img class="store-logo" src="${logoSrc}" alt="${store.name}" loading="lazy" onerror="this.outerHTML='<div class=\\'store-logo-fallback\\'>${initials(store.name)}</div>'">
-      </div>
-      <h3 class="store-name">${store.name}</h3>
-      <p class="store-meta">${store.description}</p>
-      <button type="button" class="shop-button">Shop Now</button>
-    `;
-
-    card.addEventListener("click", () => {
-      window.open(store.link || "#", "_blank");
-      const matchingOption = [...brandSelect.options].find(opt => opt.value === store.name);
-      if (matchingOption) brandSelect.value = matchingOption.value;
-      openModal("formModal");
-    });
-
-    grid.appendChild(card);
-  });
-
-  const count = storeList.length;
-  if(resultPill) resultPill.textContent = `${count} brands`;
-  if(heroStoreCount) heroStoreCount.textContent = count;
-  if(emptyState) emptyState.hidden = count !== 0;
+// Debounce so the grid doesn't re-render on every single keystroke — this
+// alone removes most of the jank people feel while typing in the search box.
+function debounce(fn, delay = 160) {
+  let timer;
+  return (...args) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn(...args), delay);
+  };
 }
 
-searchInput.addEventListener("input", (e) => {
-  const query = e.target.value.toLowerCase().trim();
-  const filtered = stores.filter(store => 
-    store.name.toLowerCase().includes(query) || 
-    store.description.toLowerCase().includes(query)
+// Build an ordered list of logo sources to try for a store: its own logo,
+// then Clearbit, then Google's favicon service (near-100% coverage, tiny
+// payload). Only after all three fail do we drop to the initials avatar.
+function buildLogoChain(store) {
+  const chain = [];
+  if (store.logo) chain.push(store.logo);
+  if (store.domain) {
+    chain.push(`https://logo.clearbit.com/${store.domain}?size=100`);
+    chain.push(`https://www.google.com/s2/favicons?domain=${store.domain}&sz=128`);
+  }
+  return chain;
+}
+
+function attachLogoFallback(img, chain, store) {
+  let step = 0;
+  img.addEventListener("error", () => {
+    step += 1;
+    if (step < chain.length) {
+      img.src = chain[step];
+      return;
+    }
+    const fallback = document.createElement("div");
+    fallback.className = "store-logo-fallback";
+    fallback.textContent = initials(store.name);
+    img.replaceWith(fallback);
+  });
+}
+
+// ---------- rendering ----------
+
+function buildCard(store, index) {
+  const card = document.createElement("div");
+  card.className = "store-card";
+  card.style.animationDelay = `${Math.min(index, 24) * 25}ms`;
+
+  const frame = document.createElement("div");
+  frame.className = "store-logo-frame";
+
+  const chain = buildLogoChain(store);
+  if (chain.length) {
+    const img = document.createElement("img");
+    img.className = "store-logo";
+    img.alt = store.name;
+    img.loading = "lazy";
+    img.decoding = "async";
+    img.src = chain[0];
+    attachLogoFallback(img, chain, store);
+    frame.appendChild(img);
+  } else {
+    const fallback = document.createElement("div");
+    fallback.className = "store-logo-fallback";
+    fallback.textContent = initials(store.name);
+    frame.appendChild(fallback);
+  }
+
+  const name = document.createElement("h3");
+  name.className = "store-name";
+  name.textContent = store.name;
+
+  const meta = document.createElement("p");
+  meta.className = "store-meta";
+  meta.textContent = store.description;
+
+  const button = document.createElement("button");
+  button.type = "button";
+  button.className = "shop-button";
+  button.textContent = "Shop Now";
+
+  card.append(frame, name, meta, button);
+
+  card.addEventListener("click", () => {
+    window.open(store.link || "#", "_blank");
+    const matchingOption = [...brandSelect.options].find(opt => opt.value === store.name);
+    if (matchingOption) brandSelect.value = matchingOption.value;
+    openModal("formModal");
+  });
+
+  return card;
+}
+
+function renderStores(storeList) {
+  // Build off-DOM first, then attach once — a single reflow instead of one
+  // per card.
+  const fragment = document.createDocumentFragment();
+  storeList.forEach((store, i) => fragment.appendChild(buildCard(store, i)));
+  grid.innerHTML = "";
+  grid.appendChild(fragment);
+
+  const count = storeList.length;
+  if (resultPill) resultPill.textContent = `${count} brands`;
+  if (heroStoreCount) heroStoreCount.textContent = count;
+  if (emptyState) emptyState.hidden = count !== 0;
+}
+
+const handleSearch = debounce((query) => {
+  const q = query.toLowerCase().trim();
+  const filtered = stores.filter(store =>
+    store.name.toLowerCase().includes(q) ||
+    store.description.toLowerCase().includes(q)
   );
   renderStores(filtered);
 });
+
+searchInput.addEventListener("input", (e) => handleSearch(e.target.value));
 
 stores.forEach(store => {
   const option = document.createElement("option");
@@ -161,6 +237,8 @@ stores.forEach(store => {
   option.textContent = store.name;
   brandSelect.appendChild(option);
 });
+
+// ---------- modals ----------
 
 function openModal(id) {
   const modal = document.getElementById(id);
@@ -212,12 +290,44 @@ document.getElementById("contactForm").addEventListener("submit", (e) => {
   const name = document.getElementById("contactName").value;
   const issue = document.getElementById("contactIssueText").value;
   const message = document.getElementById("contactMessage").value;
-  
+
   const text = encodeURIComponent(`Hi Cheapster Support,\nMy Name: ${name}\nIssue: ${issue}\n\nMessage:\n${message}`);
   window.open(`https://wa.me/919999999999?text=${text}`, '_blank');
 });
 
+// ---------- premium touches: header shadow + scroll reveal ----------
+
+const header = document.getElementById("siteHeader");
+if (header) {
+  let ticking = false;
+  window.addEventListener("scroll", () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => {
+      header.classList.toggle("is-scrolled", window.scrollY > 12);
+      ticking = false;
+    });
+  }, { passive: true });
+}
+
+const revealTargets = document.querySelectorAll(".reveal-on-scroll");
+if (revealTargets.length && "IntersectionObserver" in window) {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("in-view");
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15 });
+  revealTargets.forEach(el => observer.observe(el));
+} else {
+  revealTargets.forEach(el => el.classList.add("in-view"));
+}
+
+// ---------- init ----------
+
 renderStores(stores);
-if(document.getElementById("currentYear")) {
+if (document.getElementById("currentYear")) {
   document.getElementById("currentYear").textContent = new Date().getFullYear();
 }
