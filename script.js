@@ -11,7 +11,7 @@ const stores = [
   { name: "Myntra", domain: "myntra.com", logo: "https://upload.wikimedia.org/wikipedia/commons/b/bc/Myntra_Logo.png", description: "Fashion & lifestyle", link: "#" },
   { name: "AJIO", domain: "ajio.com", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/AJIO_Logo.svg/2560px-AJIO_Logo.svg.png", description: "Fashion destination", link: "#" },
   { name: "Tata CLiQ", domain: "tatacliq.com", logo: "https://upload.wikimedia.org/wikipedia/commons/e/e3/Tata_CLiQ_Logo.svg", description: "Multi-category retail", link: "#" },
-  { name: "Meesho", domain: "meesho.com", logo: "https://images.crunchbase.com/image/upload/c_lpad,h_170,w_170,f_auto,b_white,q_auto:eco,dpr_1/v1491901328/ubc2vuzr4q3qvxzn8s6z.png", description: "Value shopping", link: "#" },
+  { name: "Meesho", domain: "meesho.com", description: "Value shopping", link: "#" },
   { name: "Nike", domain: "nike.com", logo: "https://upload.wikimedia.org/wikipedia/commons/a/a6/Logo_NIKE.svg", description: "Sports & streetwear", link: "#" },
   { name: "Puma", domain: "puma.com", logo: "https://upload.wikimedia.org/wikipedia/en/d/d7/Puma_Logo.svg", description: "Athletic wear", link: "#" },
   { name: "Adidas", domain: "adidas.co.in", logo: "https://upload.wikimedia.org/wikipedia/commons/2/20/Adidas_Logo.svg", description: "Sports & fashion", link: "#" },
@@ -48,7 +48,7 @@ const stores = [
   // QUICK COMMERCE & FOOD
   { name: "Blinkit", domain: "blinkit.com", logo: "https://upload.wikimedia.org/wikipedia/en/thumb/7/7b/Blinkit_logo.svg/1200px-Blinkit_logo.svg.png", description: "10-min delivery", link: "#" },
   { name: "Swiggy", domain: "swiggy.com", logo: "https://upload.wikimedia.org/wikipedia/en/1/12/Swiggy_logo.svg", description: "Food & Instamart", link: "#" },
-  { name: "Zomato", domain: "zomato.com", logo: "https://b.zmtcdn.com/web_assets/b40b97e677bc7b2ca77c584612ad11f11646164215.png", description: "Food delivery", link: "#" },
+  { name: "Zomato", domain: "zomato.com", description: "Food delivery", link: "#" },
   { name: "Zepto", domain: "zeptonow.com", description: "Quick commerce", link: "#" },
   { name: "BigBasket", domain: "bigbasket.com", description: "Online grocery", link: "#" },
   { name: "EatSure", domain: "eatsure.com", description: "Food delivery", link: "#" },
@@ -126,16 +126,17 @@ function debounce(fn, delay = 160) {
   };
 }
 
-// Build an ordered list of logo sources to try for a store: its own logo,
-// then Clearbit, then Google's favicon service (near-100% coverage, tiny
-// payload). Only after all three fail do we drop to the initials avatar.
+// Build an ordered list of logo sources to try for a store: its own curated
+// logo, then Google's favicon service as a reliable fallback (near-universal
+// coverage, tiny payload, fast). NOTE: Clearbit's logo.clearbit.com is not
+// used — that service was permanently shut down (Dec 2025), and requests to
+// a dead host were exactly what made logos disappear and the page feel slow:
+// every browser had to wait for that connection to fail before trying
+// anything else.
 function buildLogoChain(store) {
   const chain = [];
   if (store.logo) chain.push(store.logo);
-  if (store.domain) {
-    chain.push(`https://logo.clearbit.com/${store.domain}?size=100`);
-    chain.push(`https://www.google.com/s2/favicons?domain=${store.domain}&sz=128`);
-  }
+  if (store.domain) chain.push(`https://www.google.com/s2/favicons?domain=${store.domain}&sz=128`);
   return chain;
 }
 
@@ -156,7 +157,7 @@ function attachLogoFallback(img, chain, store) {
 
 // ---------- rendering ----------
 
-function buildCard(store) {
+function buildCard(store, index) {
   const card = document.createElement("div");
   card.className = "store-card";
 
@@ -168,8 +169,19 @@ function buildCard(store) {
     const img = document.createElement("img");
     img.className = "store-logo";
     img.alt = store.name;
-    img.loading = "lazy";
+    img.width = 100;
+    img.height = 100;
     img.decoding = "async";
+    // First couple of rows load eagerly at high priority (what the user
+    // sees immediately); everything below the fold is lazy so it doesn't
+    // compete for bandwidth with what's on screen.
+    if (index < 12) {
+      img.loading = "eager";
+      img.fetchPriority = "high";
+    } else {
+      img.loading = "lazy";
+      img.fetchPriority = "low";
+    }
     img.src = chain[0];
     attachLogoFallback(img, chain, store);
     frame.appendChild(img);
@@ -209,7 +221,7 @@ function renderStores(storeList) {
   // Build off-DOM first, then attach once — a single reflow instead of one
   // per card.
   const fragment = document.createDocumentFragment();
-  storeList.forEach(store => fragment.appendChild(buildCard(store)));
+  storeList.forEach((store, i) => fragment.appendChild(buildCard(store, i)));
   grid.innerHTML = "";
   grid.appendChild(fragment);
 
