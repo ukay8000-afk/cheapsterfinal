@@ -155,6 +155,31 @@ function attachLogoFallback(img, chain, store) {
   });
 }
 
+// Opening brand links with window.open(url, "_blank") is what was breaking
+// this on phones: mobile browsers (and especially in-app browsers like the
+// WhatsApp/Instagram webview) frequently block window.open() unless it's
+// treated as a "trusted" popup, so the tab either never opens or opens after
+// a noticeable delay. A real <a> click is treated as a normal link tap by
+// every browser, so it opens instantly and reliably everywhere. We also
+// fall back to the brand's own domain when no real affiliate link is set
+// (a bare "#" was going nowhere, which is why cards looked broken).
+function openStoreLink(store) {
+  let url = store.link;
+  if (!url || url === "#") {
+    url = store.domain ? `https://www.${store.domain}` : null;
+  }
+  if (!url) return;
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.target = "_blank";
+  a.rel = "noopener noreferrer";
+  a.style.display = "none";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
 // ---------- rendering ----------
 
 function buildCard(store, index) {
@@ -208,7 +233,7 @@ function buildCard(store, index) {
   card.append(frame, name, meta, button);
 
   card.addEventListener("click", () => {
-    window.open(store.link || "#", "_blank");
+    openStoreLink(store);
     const matchingOption = [...brandSelect.options].find(opt => opt.value === store.name);
     if (matchingOption) brandSelect.value = matchingOption.value;
     openModal("formModal");
