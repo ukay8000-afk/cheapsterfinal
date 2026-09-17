@@ -350,6 +350,17 @@ if (header) {
 // IntersectionObserver works do we "arm" them for the hide-then-reveal
 // effect — this way the animation can only ever add polish, never hide
 // content if something about the browser or device doesn't cooperate.
+//
+// threshold was previously 0.15 (15% of the *whole* target visible at
+// once). For a short target that's fine, but .directory-section holds
+// all 77 brand cards and is many screens tall — on phones, 15% of that
+// total height often never becomes visible at once (viewport is small,
+// browser chrome resizes it further), so the section could sit at
+// opacity:0 far longer than expected, making cards look broken/unopenable
+// even though they were really just invisible. Now: reveal as soon as
+// the section starts entering the viewport (threshold 0, rootMargin
+// pulls the trigger point up a little), AND a hard timeout forces
+// visibility regardless — so this can never get stuck invisible again.
 const revealTargets = document.querySelectorAll(".reveal-on-scroll");
 if (revealTargets.length && "IntersectionObserver" in window) {
   const observer = new IntersectionObserver((entries) => {
@@ -359,10 +370,11 @@ if (revealTargets.length && "IntersectionObserver" in window) {
         observer.unobserve(entry.target);
       }
     });
-  }, { threshold: 0.15 });
+  }, { threshold: 0, rootMargin: "0px 0px -10% 0px" });
   revealTargets.forEach(el => {
     el.classList.add("reveal-armed");
     observer.observe(el);
+    setTimeout(() => el.classList.add("in-view"), 1500); // failsafe
   });
 }
 
