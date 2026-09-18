@@ -15,7 +15,7 @@ const stores = [
   { name: "Nike", domain: "nike.com", logo: "https://upload.wikimedia.org/wikipedia/commons/a/a6/Logo_NIKE.svg", description: "Sports & streetwear", link: "https://www.nike.com/in" },
   { name: "Puma", domain: "puma.com", logo: "https://upload.wikimedia.org/wikipedia/en/d/d7/Puma_Logo.svg", description: "Athletic wear", link: "https://in.puma.com" },
   { name: "Adidas", domain: "adidas.co.in", logo: "https://upload.wikimedia.org/wikipedia/commons/2/20/Adidas_Logo.svg", description: "Sports & fashion", link: "https://www.adidas.co.in" },
-  { name: "Snitch", domain: "", description: "Men's fashion", link: "https://www.snitch.co.in" },
+  { name: "Snitch", domain: "snitch.co.in", description: "Men's fashion", link: "https://www.snitch.co.in" },
   { name: "The Souled Store", domain: "thesouledstore.com", description: "Pop culture merch", link: "https://www.thesouledstore.com" },
   { name: "Bewakoof", domain: "bewakoof.com", description: "Quirky fashion", link: "https://www.bewakoof.com" },
   { name: "Urbanic", domain: "urbanic.com", description: "Gen-Z women's fashion", link: "https://www.urbanic.com" },
@@ -39,7 +39,7 @@ const stores = [
   { name: "WOW Skin Science", domain: "buywow.in", description: "Natural care", link: "https://www.buywow.in" },
 
   // HEALTH & WELLNESS
-  { name: "Plix", domain: "", description: "Plant nutrition", link: "https://www.plixlife.com" },
+  { name: "Plix", domain: "plixlife.com", description: "Plant nutrition", link: "https://www.plixlife.com" },
   { name: "MuscleBlaze", domain: "muscleblaze.com", description: "Sports nutrition", link: "https://www.muscleblaze.com" },
   { name: "Myprotein", domain: "myprotein.co.in", logo: "https://upload.wikimedia.org/wikipedia/commons/7/73/Myprotein_logo.svg", description: "Fitness supplements", link: "https://www.myprotein.co.in" },
   { name: "Kapiva", domain: "kapiva.in", description: "Ayurvedic nutrition", link: "https://www.kapiva.in" },
@@ -137,7 +137,11 @@ function buildLogoChain(store) {
   const chain = [];
   if (store.logo) chain.push(store.logo);
   if (store.domain) {
-    // Seedha Google ki fast Favicon service use karein
+    // apple-touch-icon is usually a proper high-res square logo when the
+    // site has one, and — unlike Google's service — a real 404 fires the
+    // <img> error event correctly, so we actually fall through instead of
+    // getting stuck showing a blurry generic icon.
+    chain.push(`https://${store.domain}/apple-touch-icon.png`);
     chain.push(`https://www.google.com/s2/favicons?domain=${store.domain}&sz=128`);
   }
   return chain;
@@ -307,6 +311,36 @@ document.querySelectorAll("[data-info-modal]").forEach(btn => {
   btn.addEventListener("click", () => openModal(btn.dataset.infoModal));
 });
 
+const hamburgerBtn = document.getElementById("hamburgerBtn");
+const headerDropdown = document.getElementById("headerDropdown");
+
+function closeHeaderDropdown() {
+  headerDropdown.hidden = true;
+  hamburgerBtn.setAttribute("aria-expanded", "false");
+}
+
+hamburgerBtn.addEventListener("click", (e) => {
+  e.stopPropagation();
+  const isOpen = !headerDropdown.hidden;
+  if (isOpen) {
+    closeHeaderDropdown();
+  } else {
+    headerDropdown.hidden = false;
+    hamburgerBtn.setAttribute("aria-expanded", "true");
+  }
+});
+
+// Any menu item click both opens its modal (handled above) and closes the dropdown.
+headerDropdown.querySelectorAll("button").forEach(btn => {
+  btn.addEventListener("click", closeHeaderDropdown);
+});
+
+document.addEventListener("click", (e) => {
+  if (!headerDropdown.hidden && !headerDropdown.contains(e.target)) {
+    closeHeaderDropdown();
+  }
+});
+
 window.addEventListener("load", () => {
   if (localStorage.getItem("cheapster_welcome_seen") !== "1") {
     setTimeout(() => openModal("welcomeModal"), 800);
@@ -387,26 +421,11 @@ document.getElementById("rewardForm").addEventListener("submit", async (e) => {
     return;
   }
 
-  // 1. Asli Validation Yahan Hogi
-  const nameVal = document.getElementById("fullName").value.trim();
-  const phoneVal = document.getElementById("whatsapp").value.trim();
-  const brandVal = document.getElementById("brandSelect").value;
-
-  if (!nameVal || !phoneVal || !brandVal) {
-    alert("Please fill in all mandatory fields: Name, Phone Number, and Brand.");
-    return;
-  }
-
-  if (phoneVal.length < 10) {
-    alert("Please enter a valid 10-digit phone number.");
-    return;
-  }
-
   const submitBtn = document.getElementById("submitRewardBtn");
   const payload = {
-    fullName: nameVal,
-    whatsapp: phoneVal,
-    brand: brandVal,
+    fullName: document.getElementById("fullName").value,
+    whatsapp: document.getElementById("whatsapp").value,
+    brand: document.getElementById("brandSelect").value,
     email: currentUser.email || "",
     uid: currentUser.uid || "",
     submittedAt: new Date().toISOString()
