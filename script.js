@@ -1,7 +1,6 @@
 // =========================================================
-// CHEAPSTER.IN — 77+ BRANDS DIRECTORY
-// Rebuilt for premium feel + speed: DOM-node rendering,
-// debounced search, layered logo fallback, scroll reveal.
+// CHEAPSTER.IN — 77+ BRANDS DIRECTORY (Premium Edition)
+// Haptic Feedback, Spotlight Hover, & Toast Notifications
 // =========================================================
 
 const stores = [
@@ -110,6 +109,34 @@ const heroStoreCount = document.getElementById("heroStoreCount");
 const emptyState = document.getElementById("emptyState");
 const brandSelect = document.getElementById("brandSelect");
 
+// ---------- Premium Interactions Helpers ----------
+
+// 1. Haptic Vibration (Smooth Thud on mobile)
+const haptic = () => {
+  if (navigator.vibrate) navigator.vibrate(40);
+};
+
+// 2. Custom Dynamic Toast (Replaces ugly alerts)
+function showToast(message, icon = "✨") {
+  haptic();
+  let container = document.getElementById("toastContainer");
+  if (!container) {
+    container = document.createElement("div");
+    container.id = "toastContainer";
+    container.className = "toast-container";
+    document.body.appendChild(container);
+  }
+  const toast = document.createElement("div");
+  toast.className = "toast-msg";
+  toast.innerHTML = `<span style="font-size:16px;">${icon}</span> ${message}`;
+  container.appendChild(toast);
+  
+  setTimeout(() => {
+    toast.classList.add("toast-exit");
+    toast.addEventListener("animationend", () => toast.remove());
+  }, 3500);
+}
+
 // ---------- utilities ----------
 
 function initials(name) {
@@ -150,11 +177,20 @@ function openStoreLink(store) {
   document.body.removeChild(a);
 }
 
-// ---------- rendering (Optimized for Butter Smooth Scroll) ----------
+// ---------- rendering ----------
 
 function buildCard(store, index) {
   const card = document.createElement("div");
   card.className = "store-card";
+
+  // 3. Spotlight Cursor Tracking (The Golden Glow)
+  card.addEventListener("mousemove", (e) => {
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    card.style.setProperty("--mouse-x", `${x}px`);
+    card.style.setProperty("--mouse-y", `${y}px`);
+  });
 
   const frame = document.createElement("div");
   frame.className = "store-logo-frame";
@@ -167,7 +203,6 @@ function buildCard(store, index) {
   img.height = 100;
   img.decoding = "async";
   
-  // High priority loading for first few rows
   if (index < 12) {
     img.loading = "eager";
     img.fetchPriority = "high";
@@ -176,8 +211,6 @@ function buildCard(store, index) {
     img.fetchPriority = "low";
   }
 
-  // JANK-FREE SVG FALLBACK: Instead of removing the image from the DOM (which causes lag),
-  // we instantly swap the source to a generated SVG string.
   const bgColors = ['#1c3f66', '#0d2138', '#142a44']; 
   const bg = bgColors[index % bgColors.length];
   const svgFallback = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='${encodeURIComponent(bg)}'/%3E%3Ctext x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='38' font-weight='800' fill='%23ffffff'%3E${initials(store.name)}%3C/text%3E%3C/svg%3E`;
@@ -189,8 +222,8 @@ function buildCard(store, index) {
       if (currentStep < chain.length) {
         img.src = chain[currentStep];
       } else {
-        img.onerror = null; // Prevent infinite loop
-        img.src = svgFallback; // Instant swap, ZERO DOM layout thrashing
+        img.onerror = null; 
+        img.src = svgFallback; 
       }
     };
     img.src = chain[0]; 
@@ -216,6 +249,7 @@ function buildCard(store, index) {
   card.append(frame, name, meta, button);
 
   card.addEventListener("click", () => {
+    haptic(); // Add vibration on click
     openStoreLink(store);
     const matchingOption = [...brandSelect.options].find(opt => opt.value === store.name);
     if (matchingOption) brandSelect.value = matchingOption.value;
@@ -258,11 +292,13 @@ stores.forEach(store => {
 // ---------- modals ----------
 
 function openModal(id) {
+  haptic();
   const modal = document.getElementById(id);
   if (modal) { modal.hidden = false; document.body.classList.add("modal-open"); }
 }
 
 function closeModal(id) {
+  haptic();
   const modal = document.getElementById(id);
   if (modal) { modal.hidden = true; document.body.classList.remove("modal-open"); }
 }
@@ -295,6 +331,7 @@ function closeHeaderDropdown() {
 
 hamburgerBtn.addEventListener("click", (e) => {
   e.stopPropagation();
+  haptic();
   const isOpen = !headerDropdown.hidden;
   if (isOpen) {
     closeHeaderDropdown();
@@ -325,7 +362,7 @@ document.getElementById("continueBtn").addEventListener("click", () => {
   closeModal("welcomeModal");
 });
 
-// ---------- Google login (Firebase Auth - Removed Delete Account) ----------
+// ---------- Google login (Firebase Auth) ----------
 
 const authBtn = document.getElementById("authBtn");
 const authBtnText = document.getElementById("authBtnText");
@@ -335,10 +372,11 @@ let currentUser = null;
 
 if (window.auth) {
   authBtn.addEventListener("click", () => {
+    haptic();
     if (currentUser) return;
 
     window.auth.signInWithPopup(window.googleProvider).catch((err) => {
-      console.error("Google sign-in (popup) failed:", err.code, err.message);
+      console.error("Google sign-in failed:", err.code, err.message);
       if (
         err.code === "auth/popup-blocked" ||
         err.code === "auth/operation-not-supported-in-this-environment" ||
@@ -347,9 +385,9 @@ if (window.auth) {
       ) {
         window.auth.signInWithRedirect(window.googleProvider);
       } else if (err.code === "auth/unauthorized-domain") {
-        alert("This domain isn't authorized for login yet.");
+        showToast("Domain not authorized for login.", "⚠️");
       } else {
-        alert("Login failed, please try again.");
+        showToast("Login failed. Please try again.", "❌");
       }
     });
   });
@@ -376,7 +414,7 @@ if (window.auth) {
 
   logoutBtn.addEventListener("click", () => window.auth.signOut());
 } else {
-  authBtn.addEventListener("click", () => alert("Login isn't configured yet."));
+  authBtn.addEventListener("click", () => showToast("Login isn't configured yet.", "⚠️"));
 }
 
 // ---------- reward form → Google Sheet ----------
@@ -387,7 +425,7 @@ document.getElementById("rewardForm").addEventListener("submit", async (e) => {
   e.preventDefault();
 
   if (!currentUser) {
-    alert("Please login with Google first, then submit your entry.");
+    showToast("Please login with Google first.", "🔒");
     return;
   }
 
@@ -403,6 +441,7 @@ document.getElementById("rewardForm").addEventListener("submit", async (e) => {
 
   submitBtn.disabled = true;
   submitBtn.textContent = "Submitting...";
+  haptic();
 
   try {
     await fetch(SHEET_WEBAPP_URL, {
@@ -414,7 +453,7 @@ document.getElementById("rewardForm").addEventListener("submit", async (e) => {
     document.getElementById("successView").hidden = false;
   } catch (err) {
     console.error("Sheet submission failed:", err);
-    alert("Something went wrong submitting your entry. Please try again.");
+    showToast("Submission failed. Try again.", "⚠️");
   } finally {
     submitBtn.disabled = false;
     submitBtn.textContent = "Submit Entry";
@@ -428,7 +467,7 @@ document.getElementById("contactForm").addEventListener("submit", (e) => {
   const message = document.getElementById("contactMessage").value;
 
   const text = encodeURIComponent(`Hi Cheapster Support,\nMy Name: ${name}\nIssue: ${issue}\n\nMessage:\n${message}`);
-  openStoreLink({ link: `https://wa.me/919999999999?text=${text}` }); // Update with real number
+  openStoreLink({ link: `https://wa.me/919999999999?text=${text}` }); 
 });
 
 // ---------- premium touches: header shadow + scroll reveal ----------
