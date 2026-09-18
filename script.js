@@ -150,7 +150,7 @@ function openStoreLink(store) {
   document.body.removeChild(a);
 }
 
-// ---------- rendering ----------
+// ---------- rendering (Optimized for Butter Smooth Scroll) ----------
 
 function buildCard(store, index) {
   const card = document.createElement("div");
@@ -160,46 +160,45 @@ function buildCard(store, index) {
   frame.className = "store-logo-frame";
 
   const chain = buildLogoChain(store);
+  const img = document.createElement("img");
+  img.className = "store-logo";
+  img.alt = store.name;
+  img.width = 100;
+  img.height = 100;
+  img.decoding = "async";
   
-  if (chain.length > 0) {
-    const img = document.createElement("img");
-    img.className = "store-logo";
-    img.alt = store.name;
-    img.width = 100;
-    img.height = 100;
-    img.decoding = "async";
-    
-    // High priority loading for first few rows
-    if (index < 12) {
-      img.loading = "eager";
-      img.fetchPriority = "high";
-    } else {
-      img.loading = "lazy";
-      img.fetchPriority = "low";
-    }
+  // High priority loading for first few rows
+  if (index < 12) {
+    img.loading = "eager";
+    img.fetchPriority = "high";
+  } else {
+    img.loading = "lazy";
+    img.fetchPriority = "low";
+  }
 
-    // Native Browser Loading Fallback (Lightning fast & reliable)
+  // JANK-FREE SVG FALLBACK: Instead of removing the image from the DOM (which causes lag),
+  // we instantly swap the source to a generated SVG string.
+  const bgColors = ['#1c3f66', '#0d2138', '#142a44']; 
+  const bg = bgColors[index % bgColors.length];
+  const svgFallback = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='${encodeURIComponent(bg)}'/%3E%3Ctext x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='38' font-weight='800' fill='%23ffffff'%3E${initials(store.name)}%3C/text%3E%3C/svg%3E`;
+
+  if (chain.length > 0) {
     let currentStep = 0;
     img.onerror = () => {
       currentStep++;
       if (currentStep < chain.length) {
         img.src = chain[currentStep];
       } else {
-        const fallback = document.createElement("div");
-        fallback.className = "store-logo-fallback";
-        fallback.textContent = initials(store.name);
-        img.replaceWith(fallback);
+        img.onerror = null; // Prevent infinite loop
+        img.src = svgFallback; // Instant swap, ZERO DOM layout thrashing
       }
     };
-    
-    img.src = chain[0]; // Start loading the first image
-    frame.appendChild(img);
+    img.src = chain[0]; 
   } else {
-    const fallback = document.createElement("div");
-    fallback.className = "store-logo-fallback";
-    fallback.textContent = initials(store.name);
-    frame.appendChild(fallback);
+    img.src = svgFallback;
   }
+  
+  frame.appendChild(img);
 
   const name = document.createElement("h3");
   name.className = "store-name";
@@ -371,7 +370,6 @@ if (window.auth) {
       authBtn.title = "Login with Google";
     }
     
-    // Manage Logout visibility
     logoutBtn.hidden = !user;
     accountDropdownDivider.hidden = !user;
   });
