@@ -108,6 +108,9 @@ a { color: inherit; text-decoration: none; }
 .header-dropdown { position: absolute; top: calc(100% + 8px); right: 17px; background: var(--panel-solid); border: 1px solid var(--line-gold); border-radius: 14px; box-shadow: var(--shadow-lift); display: flex; flex-direction: column; padding: 8px; min-width: 220px; z-index: 110; }
 .header-dropdown button { background: none; border: none; text-align: left; color: var(--platinum); font-size: 13px; font-weight: 600; padding: 10px 12px; border-radius: 8px; cursor: pointer; }
 .header-dropdown button:hover { background: var(--panel-solid-hover); color: var(--champagne-bright); }
+.dropdown-divider { height: 1px; background: var(--line); margin: 6px 4px; }
+.header-dropdown button.dropdown-danger { color: #e07a72; }
+.header-dropdown button.dropdown-danger:hover { background: rgba(217, 83, 79, 0.12); color: #ff8f87; }
 
 /* Buttons */
 .btn { min-height: 42px; padding: 0 16px; border-radius: 100px; border: none; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 700; font-size: 13px; transition: transform .2s ease, box-shadow .2s ease; }
