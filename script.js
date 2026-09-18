@@ -116,8 +116,6 @@ function initials(name) {
   return name.substring(0, 2).toUpperCase();
 }
 
-// Debounce so the grid doesn't re-render on every single keystroke — this
-// alone removes most of the jank people feel while typing in the search box.
 function debounce(fn, delay = 160) {
   let timer;
   return (...args) => {
@@ -130,52 +128,11 @@ function buildLogoChain(store) {
   const chain = [];
   if (store.logo) chain.push(store.logo);
   if (store.domain) {
-    // Seedha Google ki fast Favicon service use karein
     chain.push(`https://www.google.com/s2/favicons?domain=${store.domain}&sz=128`);
   }
   return chain;
 }
 
-function attachLogoFallback(img, chain, store) {
-  let step = 0;
-  let timer = null;
-
-  function armTimeout() {
-    clearTimeout(timer);
-    // A slow (not erroring, just hanging) request — e.g. a domain with no
-    // apple-touch-icon.png that never actually 404s quickly — shouldn't be
-    // allowed to hold up the logo indefinitely. Give each attempt a short
-    // bounded window, then move on regardless of whether it ever resolves.
-    timer = setTimeout(advance, 800);
-  }
-
-  function advance() {
-    clearTimeout(timer);
-    step += 1;
-    if (step < chain.length) {
-      img.src = chain[step];
-      armTimeout();
-      return;
-    }
-    const fallback = document.createElement("div");
-    fallback.className = "store-logo-fallback";
-    fallback.textContent = initials(store.name);
-    img.replaceWith(fallback);
-  }
-
-  img.addEventListener("load", () => clearTimeout(timer));
-  img.addEventListener("error", advance);
-  armTimeout();
-}
-
-// Opening brand links with window.open(url, "_blank") is what was breaking
-// this on phones: mobile browsers (and especially in-app browsers like the
-// WhatsApp/Instagram webview) frequently block window.open() unless it's
-// treated as a "trusted" popup, so the tab either never opens or opens after
-// a noticeable delay. A real <a> click is treated as a normal link tap by
-// every browser, so it opens instantly and reliably everywhere. We also
-// fall back to the brand's own domain when no real affiliate link is set
-// (a bare "#" was going nowhere, which is why cards looked broken).
 function openStoreLink(store) {
   let url = store.link;
   if (!url || url === "#") {
@@ -203,16 +160,16 @@ function buildCard(store, index) {
   frame.className = "store-logo-frame";
 
   const chain = buildLogoChain(store);
-  if (chain.length) {
+  
+  if (chain.length > 0) {
     const img = document.createElement("img");
     img.className = "store-logo";
     img.alt = store.name;
     img.width = 100;
     img.height = 100;
     img.decoding = "async";
-    // First couple of rows load eagerly at high priority (what the user
-    // sees immediately); everything below the fold is lazy so it doesn't
-    // compete for bandwidth with what's on screen.
+    
+    // High priority loading for first few rows
     if (index < 12) {
       img.loading = "eager";
       img.fetchPriority = "high";
@@ -220,8 +177,22 @@ function buildCard(store, index) {
       img.loading = "lazy";
       img.fetchPriority = "low";
     }
-    img.src = chain[0];
-    attachLogoFallback(img, chain, store);
+
+    // Native Browser Loading Fallback (Lightning fast & reliable)
+    let currentStep = 0;
+    img.onerror = () => {
+      currentStep++;
+      if (currentStep < chain.length) {
+        img.src = chain[currentStep];
+      } else {
+        const fallback = document.createElement("div");
+        fallback.className = "store-logo-fallback";
+        fallback.textContent = initials(store.name);
+        img.replaceWith(fallback);
+      }
+    };
+    
+    img.src = chain[0]; // Start loading the first image
     frame.appendChild(img);
   } else {
     const fallback = document.createElement("div");
@@ -256,8 +227,6 @@ function buildCard(store, index) {
 }
 
 function renderStores(storeList) {
-  // Build off-DOM first, then attach once — a single reflow instead of one
-  // per card.
   const fragment = document.createDocumentFragment();
   storeList.forEach((store, i) => fragment.appendChild(buildCard(store, i)));
   grid.innerHTML = "";
@@ -336,7 +305,6 @@ hamburgerBtn.addEventListener("click", (e) => {
   }
 });
 
-// Any menu item click both opens its modal (handled above) and closes the dropdown.
 headerDropdown.querySelectorAll("button").forEach(btn => {
   btn.addEventListener("click", closeHeaderDropdown);
 });
@@ -358,28 +326,20 @@ document.getElementById("continueBtn").addEventListener("click", () => {
   closeModal("welcomeModal");
 });
 
-// ---------- Google login (Firebase Auth) ----------
+// ---------- Google login (Firebase Auth - Removed Delete Account) ----------
 
 const authBtn = document.getElementById("authBtn");
 const authBtnText = document.getElementById("authBtnText");
 const logoutBtn = document.getElementById("logoutBtn");
-const deleteAccountBtn = document.getElementById("deleteAccountBtn");
 const accountDropdownDivider = document.getElementById("accountDropdownDivider");
 let currentUser = null;
 
 if (window.auth) {
   authBtn.addEventListener("click", () => {
-    // Once logged in, this button is just a display of who you're signed
-    // in as — it no longer does anything on click. Logout / Delete Account
-    // live in the hamburger menu instead (see below).
     if (currentUser) return;
 
     window.auth.signInWithPopup(window.googleProvider).catch((err) => {
       console.error("Google sign-in (popup) failed:", err.code, err.message);
-      // Popups are silently blocked in a lot of mobile browsers and in
-      // almost every in-app browser (Instagram/WhatsApp/Facebook webviews).
-      // When that happens, fall back to a full-page redirect flow instead
-      // of just failing — this is what makes login actually work on phones.
       if (
         err.code === "auth/popup-blocked" ||
         err.code === "auth/operation-not-supported-in-this-environment" ||
@@ -388,14 +348,13 @@ if (window.auth) {
       ) {
         window.auth.signInWithRedirect(window.googleProvider);
       } else if (err.code === "auth/unauthorized-domain") {
-        alert("This domain isn't authorized for login yet (Firebase Console → Authentication → Settings → Authorized domains).");
+        alert("This domain isn't authorized for login yet.");
       } else {
         alert("Login failed, please try again.");
       }
     });
   });
 
-  // Catches the user coming back after signInWithRedirect above.
   window.auth.getRedirectResult().catch((err) => {
     if (err) console.error("Google sign-in (redirect) failed:", err.code, err.message);
   });
@@ -411,102 +370,19 @@ if (window.auth) {
       authBtnText.textContent = "Login";
       authBtn.title = "Login with Google";
     }
-    // Logout / Delete Account only make sense once signed in.
+    
+    // Manage Logout visibility
     logoutBtn.hidden = !user;
-    deleteAccountBtn.hidden = !user;
     accountDropdownDivider.hidden = !user;
   });
 
   logoutBtn.addEventListener("click", () => window.auth.signOut());
-
-  deleteAccountBtn.addEventListener("click", () => {
-    document.getElementById("deleteReason").value = "";
-    openModal("deleteAccountModal");
-  });
-
-  document.getElementById("deleteAccountForm").addEventListener("submit", async (e) => {
-    e.preventDefault();
-    if (!currentUser) return;
-
-    const confirmBtn = document.getElementById("confirmDeleteBtn");
-    const reason = document.getElementById("deleteReason").value.trim();
-    const user = currentUser;
-
-    confirmBtn.disabled = true;
-    confirmBtn.textContent = "Deleting...";
-
-    async function logReasonThenDelete() {
-      // Log the deletion (with the optional reason) to Firestore — the
-      // same Firebase project the login itself lives in — before the
-      // account is gone and uid/email are no longer available.
-      //
-      // If Firestore isn't set up yet in the Firebase console, a write
-      // doesn't fail fast — it just hangs with no response at all, which
-      // would freeze the whole delete flow. The timeout below guarantees
-      // we give up on logging after 5s and go straight to deleting the
-      // account either way.
-      if (window.db) {
-        try {
-          await Promise.race([
-            window.db.collection("accountDeletions").add({
-              uid: user.uid,
-              name: user.displayName || "",
-              email: user.email || "",
-              reason: reason || "",
-              deletedAt: firebase.firestore.FieldValue.serverTimestamp()
-            }),
-            new Promise((_, reject) => setTimeout(() => reject(new Error("Firestore log timed out")), 5000))
-          ]);
-        } catch (err) {
-          // Don't block account deletion just because the log write failed
-          // or timed out (e.g. Firestore not enabled yet) — log it and continue.
-          console.error("Could not log account deletion reason:", err);
-        }
-      }
-      await user.delete();
-    }
-
-    // Overall safety net: no matter what hangs internally, never leave the
-    // button stuck on "Deleting..." forever.
-    const overallTimeout = new Promise((_, reject) =>
-      setTimeout(() => reject(new Error("Account deletion timed out")), 15000)
-    );
-
-    try {
-      await Promise.race([logReasonThenDelete(), overallTimeout]);
-      closeModal("deleteAccountModal");
-      alert("Your account has been deleted.");
-    } catch (err) {
-      if (err.code === "auth/requires-recent-login") {
-        // Firebase requires a fresh sign-in before a destructive action
-        // like account deletion. Re-authenticate, then retry once.
-        try {
-          await window.auth.signInWithPopup(window.googleProvider);
-          await Promise.race([logReasonThenDelete(), overallTimeout]);
-          closeModal("deleteAccountModal");
-          alert("Your account has been deleted.");
-        } catch (err2) {
-          console.error("Account deletion failed after re-auth:", err2);
-          alert("Couldn't delete your account. Please try again.");
-        }
-      } else {
-        console.error("Account deletion failed:", err);
-        alert("Couldn't delete your account. Please try again.");
-      }
-    } finally {
-      confirmBtn.disabled = false;
-      confirmBtn.textContent = "Permanently Delete My Account";
-    }
-  });
 } else {
-  // firebase-config.js didn't load / isn't set up yet — don't leave the
-  // button silently doing nothing; tell whoever's testing the site why.
   authBtn.addEventListener("click", () => alert("Login isn't configured yet."));
 }
 
 // ---------- reward form → Google Sheet ----------
 
-// Paste your deployed Google Apps Script Web App URL here (see setup notes).
 const SHEET_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbziQvJq8kqk-CAHRekAHjkSVEJkQmbBp84girc4vjfTPbY20VJl2hz_I-OC-bWBcjQf/exec";
 
 document.getElementById("rewardForm").addEventListener("submit", async (e) => {
@@ -531,12 +407,6 @@ document.getElementById("rewardForm").addEventListener("submit", async (e) => {
   submitBtn.textContent = "Submitting...";
 
   try {
-    // mode: "no-cors" is required here — Apps Script Web Apps respond via a
-    // redirect to a googleusercontent.com URL that doesn't send CORS
-    // headers, so a normal fetch() throws a network error even when the
-    // row was written successfully. We don't need to read the response
-    // (we show our own success view), so we just fire the request and
-    // stop the browser from trying to read a response we don't need.
     await fetch(SHEET_WEBAPP_URL, {
       method: "POST",
       mode: "no-cors",
@@ -560,7 +430,7 @@ document.getElementById("contactForm").addEventListener("submit", (e) => {
   const message = document.getElementById("contactMessage").value;
 
   const text = encodeURIComponent(`Hi Cheapster Support,\nMy Name: ${name}\nIssue: ${issue}\n\nMessage:\n${message}`);
-  openStoreLink({ link: `https://wa.me/919999999999?text=${text}` }); // TODO: replace with your real WhatsApp business number
+  openStoreLink({ link: `https://wa.me/919999999999?text=${text}` }); // Update with real number
 });
 
 // ---------- premium touches: header shadow + scroll reveal ----------
@@ -578,21 +448,6 @@ if (header) {
   }, { passive: true });
 }
 
-// Sections render fully visible by default (see CSS). Only once we know
-// IntersectionObserver works do we "arm" them for the hide-then-reveal
-// effect — this way the animation can only ever add polish, never hide
-// content if something about the browser or device doesn't cooperate.
-//
-// threshold was previously 0.15 (15% of the *whole* target visible at
-// once). For a short target that's fine, but .directory-section holds
-// all 77 brand cards and is many screens tall — on phones, 15% of that
-// total height often never becomes visible at once (viewport is small,
-// browser chrome resizes it further), so the section could sit at
-// opacity:0 far longer than expected, making cards look broken/unopenable
-// even though they were really just invisible. Now: reveal as soon as
-// the section starts entering the viewport (threshold 0, rootMargin
-// pulls the trigger point up a little), AND a hard timeout forces
-// visibility regardless — so this can never get stuck invisible again.
 const revealTargets = document.querySelectorAll(".reveal-on-scroll");
 if (revealTargets.length && "IntersectionObserver" in window) {
   const observer = new IntersectionObserver((entries) => {
@@ -606,7 +461,7 @@ if (revealTargets.length && "IntersectionObserver" in window) {
   revealTargets.forEach(el => {
     el.classList.add("reveal-armed");
     observer.observe(el);
-    setTimeout(() => el.classList.add("in-view"), 1500); // failsafe
+    setTimeout(() => el.classList.add("in-view"), 1500);
   });
 }
 
