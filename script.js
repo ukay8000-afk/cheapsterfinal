@@ -126,13 +126,6 @@ function debounce(fn, delay = 160) {
   };
 }
 
-// Build an ordered list of logo sources to try for a store: its own curated
-// logo, then Google's favicon service as a reliable fallback (near-universal
-// coverage, tiny payload, fast). NOTE: Clearbit's logo.clearbit.com is not
-// used — that service was permanently shut down (Dec 2025), and requests to
-// a dead host were exactly what made logos disappear and the page feel slow:
-// every browser had to wait for that connection to fail before trying
-// anything else.
 function buildLogoChain(store) {
   const chain = [];
   if (store.logo) chain.push(store.logo);
