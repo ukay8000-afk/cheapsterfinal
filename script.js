@@ -1,6 +1,6 @@
 // =========================================================
 // CHEAPSTER.IN — 77+ BRANDS DIRECTORY (Premium Edition)
-// Haptic Feedback, Spotlight Hover, & Toast Notifications
+// Haptic Feedback, Spotlight Hover, Toast Notifications, & PWA
 // =========================================================
 
 const stores = [
@@ -111,12 +111,10 @@ const brandSelect = document.getElementById("brandSelect");
 
 // ---------- Premium Interactions Helpers ----------
 
-// 1. Haptic Vibration (Smooth Thud on mobile)
 const haptic = () => {
   if (navigator.vibrate) navigator.vibrate(40);
 };
 
-// 2. Custom Dynamic Toast (Replaces ugly alerts)
 function showToast(message, icon = "✨") {
   haptic();
   let container = document.getElementById("toastContainer");
@@ -183,7 +181,6 @@ function buildCard(store, index) {
   const card = document.createElement("div");
   card.className = "store-card";
 
-  // 3. Spotlight Cursor Tracking
   card.addEventListener("mousemove", (e) => {
     const rect = card.getBoundingClientRect();
     const x = e.clientX - rect.left;
@@ -367,7 +364,7 @@ document.getElementById("continueBtn").addEventListener("click", () => {
 const authBtn = document.getElementById("authBtn");
 const authBtnText = document.getElementById("authBtnText");
 const logoutBtn = document.getElementById("logoutBtn");
-const menuLoginBtn = document.getElementById("menuLoginBtn"); // New button in menu
+const menuLoginBtn = document.getElementById("menuLoginBtn"); 
 let currentUser = null;
 
 if (window.auth) {
@@ -407,14 +404,12 @@ if (window.auth) {
       const nameField = document.getElementById("fullName");
       if (nameField && !nameField.value) nameField.value = user.displayName || "";
       
-      // Toggle Menu Buttons
       logoutBtn.hidden = false;
       if (menuLoginBtn) menuLoginBtn.hidden = true;
     } else {
       authBtnText.textContent = "Login";
       authBtn.title = "Login with Google";
       
-      // Toggle Menu Buttons
       logoutBtn.hidden = true;
       if (menuLoginBtn) menuLoginBtn.hidden = false;
     }
@@ -427,7 +422,7 @@ if (window.auth) {
   if (menuLoginBtn) menuLoginBtn.addEventListener("click", alertNotConfigured);
 }
 
-// ---------- reward form → Google Sheet (Optimistic UI - Lightning Fast) ----------
+// ---------- reward form → Google Sheet ----------
 
 const SHEET_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbziQvJq8kqk-CAHRekAHjkSVEJkQmbBp84girc4vjfTPbY20VJl2hz_I-OC-bWBcjQf/exec";
 
@@ -511,9 +506,56 @@ if (revealTargets.length && "IntersectionObserver" in window) {
   });
 }
 
-// ---------- init ----------
-
 renderStores(stores);
 if (document.getElementById("currentYear")) {
   document.getElementById("currentYear").textContent = new Date().getFullYear();
+}
+
+// =========================================================
+// PWA INSTALL BUTTON & SERVICE WORKER SETUP
+// =========================================================
+
+// 1. Register Service Worker for PWA
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch((err) => {
+      console.log('Service worker registration failed.', err);
+    });
+  });
+}
+
+// 2. Custom App Install Button Logic
+let deferredPrompt;
+const installBtn = document.getElementById('installAppBtn');
+
+if (installBtn) {
+  window.addEventListener('beforeinstallprompt', (e) => {
+    // Prevent Chrome's default bottom mini-infobar from appearing
+    e.preventDefault();
+    // Stash the event to trigger it on button click
+    deferredPrompt = e;
+    // Un-hide our custom button in the footer
+    installBtn.style.display = 'inline-flex';
+  });
+
+  installBtn.addEventListener('click', async () => {
+    haptic();
+    if (deferredPrompt) {
+      // Show the native Android install prompt
+      deferredPrompt.prompt();
+      // Wait for the user to respond
+      const { outcome } = await deferredPrompt.userChoice;
+      console.log(`User response to install: ${outcome}`);
+      // Once used, the prompt can't be used again
+      deferredPrompt = null;
+      // Hide the button after interaction
+      installBtn.style.display = 'none';
+    }
+  });
+
+  window.addEventListener('appinstalled', () => {
+    installBtn.style.display = 'none';
+    deferredPrompt = null;
+    console.log('App successfully installed!');
+  });
 }
