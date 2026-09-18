@@ -1,5 +1,5 @@
 // ============================================================
-// FIREBASE CONFIG
+// FIREBASE CONFIG (Cleaned - No Firestore)
 // ============================================================
 const firebaseConfig = {
   apiKey: "AIzaSyAkmyH4pJWH-0MtdZ-RuEQLeSietZKwRTc",
@@ -14,4 +14,3 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 window.auth = firebase.auth();
 window.googleProvider = new firebase.auth.GoogleAuthProvider();
-window.db = firebase.firestore();
