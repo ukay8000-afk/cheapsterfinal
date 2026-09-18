@@ -433,26 +433,41 @@ if (window.auth) {
       // Log the deletion (with the optional reason) to Firestore — the
       // same Firebase project the login itself lives in — before the
       // account is gone and uid/email are no longer available.
+      //
+      // If Firestore isn't set up yet in the Firebase console, a write
+      // doesn't fail fast — it just hangs with no response at all, which
+      // would freeze the whole delete flow. The timeout below guarantees
+      // we give up on logging after 5s and go straight to deleting the
+      // account either way.
       if (window.db) {
         try {
-          await window.db.collection("accountDeletions").add({
-            uid: user.uid,
-            name: user.displayName || "",
-            email: user.email || "",
-            reason: reason || "",
-            deletedAt: firebase.firestore.FieldValue.serverTimestamp()
-          });
+          await Promise.race([
+            window.db.collection("accountDeletions").add({
+              uid: user.uid,
+              name: user.displayName || "",
+              email: user.email || "",
+              reason: reason || "",
+              deletedAt: firebase.firestore.FieldValue.serverTimestamp()
+            }),
+            new Promise((_, reject) => setTimeout(() => reject(new Error("Firestore log timed out")), 5000))
+          ]);
         } catch (err) {
           // Don't block account deletion just because the log write failed
-          // (e.g. Firestore not enabled yet) — log it and continue.
+          // or timed out (e.g. Firestore not enabled yet) — log it and continue.
           console.error("Could not log account deletion reason:", err);
         }
       }
       await user.delete();
     }
 
+    // Overall safety net: no matter what hangs internally, never leave the
+    // button stuck on "Deleting..." forever.
+    const overallTimeout = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error("Account deletion timed out")), 15000)
+    );
+
     try {
-      await logReasonThenDelete();
+      await Promise.race([logReasonThenDelete(), overallTimeout]);
       closeModal("deleteAccountModal");
       alert("Your account has been deleted.");
     } catch (err) {
@@ -461,7 +476,7 @@ if (window.auth) {
         // like account deletion. Re-authenticate, then retry once.
         try {
           await window.auth.signInWithPopup(window.googleProvider);
-          await logReasonThenDelete();
+          await Promise.race([logReasonThenDelete(), overallTimeout]);
           closeModal("deleteAccountModal");
           alert("Your account has been deleted.");
         } catch (err2) {
