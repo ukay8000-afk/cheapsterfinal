@@ -137,11 +137,7 @@ function buildLogoChain(store) {
   const chain = [];
   if (store.logo) chain.push(store.logo);
   if (store.domain) {
-    // apple-touch-icon is usually a proper high-res square logo when the
-    // site has one, and — unlike Google's service — a real 404 fires the
-    // <img> error event correctly, so we actually fall through instead of
-    // getting stuck showing a blurry generic icon.
-    chain.push(`https://${store.domain}/apple-touch-icon.png`);
+    // Seedha Google ki fast Favicon service use karein
     chain.push(`https://www.google.com/s2/favicons?domain=${store.domain}&sz=128`);
   }
   return chain;
