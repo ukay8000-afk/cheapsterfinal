@@ -183,7 +183,7 @@ function buildCard(store, index) {
   const card = document.createElement("div");
   card.className = "store-card";
 
-  // 3. Spotlight Cursor Tracking (The Golden Glow)
+  // 3. Spotlight Cursor Tracking
   card.addEventListener("mousemove", (e) => {
     const rect = card.getBoundingClientRect();
     const x = e.clientX - rect.left;
@@ -249,7 +249,7 @@ function buildCard(store, index) {
   card.append(frame, name, meta, button);
 
   card.addEventListener("click", () => {
-    haptic(); // Add vibration on click
+    haptic();
     openStoreLink(store);
     const matchingOption = [...brandSelect.options].find(opt => opt.value === store.name);
     if (matchingOption) brandSelect.value = matchingOption.value;
@@ -367,11 +367,11 @@ document.getElementById("continueBtn").addEventListener("click", () => {
 const authBtn = document.getElementById("authBtn");
 const authBtnText = document.getElementById("authBtnText");
 const logoutBtn = document.getElementById("logoutBtn");
-const accountDropdownDivider = document.getElementById("accountDropdownDivider");
+const menuLoginBtn = document.getElementById("menuLoginBtn"); // New button in menu
 let currentUser = null;
 
 if (window.auth) {
-  authBtn.addEventListener("click", () => {
+  const handleLogin = () => {
     haptic();
     if (currentUser) return;
 
@@ -390,7 +390,10 @@ if (window.auth) {
         showToast("Login failed. Please try again.", "❌");
       }
     });
-  });
+  };
+
+  authBtn.addEventListener("click", handleLogin);
+  if (menuLoginBtn) menuLoginBtn.addEventListener("click", handleLogin);
 
   window.auth.getRedirectResult().catch((err) => {
     if (err) console.error("Google sign-in (redirect) failed:", err.code, err.message);
@@ -403,25 +406,32 @@ if (window.auth) {
       authBtn.title = user.displayName || "Signed in";
       const nameField = document.getElementById("fullName");
       if (nameField && !nameField.value) nameField.value = user.displayName || "";
+      
+      // Toggle Menu Buttons
+      logoutBtn.hidden = false;
+      if (menuLoginBtn) menuLoginBtn.hidden = true;
     } else {
       authBtnText.textContent = "Login";
       authBtn.title = "Login with Google";
+      
+      // Toggle Menu Buttons
+      logoutBtn.hidden = true;
+      if (menuLoginBtn) menuLoginBtn.hidden = false;
     }
-    
-    logoutBtn.hidden = !user;
-    accountDropdownDivider.hidden = !user;
   });
 
   logoutBtn.addEventListener("click", () => window.auth.signOut());
 } else {
-  authBtn.addEventListener("click", () => showToast("Login isn't configured yet.", "⚠️"));
+  const alertNotConfigured = () => showToast("Login isn't configured yet.", "⚠️");
+  authBtn.addEventListener("click", alertNotConfigured);
+  if (menuLoginBtn) menuLoginBtn.addEventListener("click", alertNotConfigured);
 }
 
-// ---------- reward form → Google Sheet ----------
+// ---------- reward form → Google Sheet (Optimistic UI - Lightning Fast) ----------
 
 const SHEET_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbziQvJq8kqk-CAHRekAHjkSVEJkQmbBp84girc4vjfTPbY20VJl2hz_I-OC-bWBcjQf/exec";
 
-document.getElementById("rewardForm").addEventListener("submit", async (e) => {
+document.getElementById("rewardForm").addEventListener("submit", (e) => {
   e.preventDefault();
 
   if (!currentUser) {
@@ -443,21 +453,20 @@ document.getElementById("rewardForm").addEventListener("submit", async (e) => {
   submitBtn.textContent = "Submitting...";
   haptic();
 
-  try {
-    await fetch(SHEET_WEBAPP_URL, {
-      method: "POST",
-      mode: "no-cors",
-      body: new URLSearchParams(payload)
-    });
+  fetch(SHEET_WEBAPP_URL, {
+    method: "POST",
+    mode: "no-cors",
+    body: new URLSearchParams(payload)
+  }).catch((err) => console.error("Sheet submission error in background:", err));
+
+  setTimeout(() => {
     document.getElementById("rewardForm").hidden = true;
     document.getElementById("successView").hidden = false;
-  } catch (err) {
-    console.error("Sheet submission failed:", err);
-    showToast("Submission failed. Try again.", "⚠️");
-  } finally {
+    
     submitBtn.disabled = false;
     submitBtn.textContent = "Submit Entry";
-  }
+    haptic(); 
+  }, 600);
 });
 
 document.getElementById("contactForm").addEventListener("submit", (e) => {
