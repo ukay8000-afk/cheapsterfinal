@@ -7,6 +7,9 @@
   <meta name="description" content="Cheapster.in — India's premium independent affiliate directory.">
   <title>Cheapster.in — Shop Smart. Discover More.</title>
   
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="manifest.json">
+
   <!-- GOOGLE ANALYTICS TRACKING CODE -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-69933BBTXY"></script>
   <script>
@@ -169,6 +172,11 @@
         <button type="button" data-info-modal="policyModal">Giveaway & Payout Policy</button>
         <button type="button" data-info-modal="termsModal">Terms & Privacy</button>
         <button type="button" data-info-modal="contactModal">Contact Us</button>
+        
+        <!-- PWA INSTALL BUTTON (Hidden by default) -->
+        <button type="button" id="installAppBtn" style="display: none; margin-top: 20px; border: 1px solid var(--line-gold); background: rgba(205, 161, 92, 0.08); color: var(--champagne-bright); font-weight: 700; font-size: 13px; padding: 10px 16px; border-radius: 12px; transition: background .2s; width: fit-content;">
+          📱 Install Cheapster App
+        </button>
       </div>
     </div>
     
@@ -322,7 +330,7 @@
     </div>
   </div>
 
-  <!-- FIREBASE (Google Login ONLY) -->
+  <!-- FIREBASE -->
   <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
   <script src="firebase-config.js"></script>
