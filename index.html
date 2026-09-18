@@ -60,7 +60,6 @@
         <button type="button" data-info-modal="contactModal">Contact Us</button>
         <div class="dropdown-divider" id="accountDropdownDivider" hidden></div>
         <button type="button" id="logoutBtn" hidden>Logout</button>
-        <button type="button" id="deleteAccountBtn" class="dropdown-danger" hidden>Delete Account</button>
       </nav>
     </div>
 
@@ -191,7 +190,7 @@
     </div>
   </div>
 
-  <!-- GIVEAWAY FORM (Updated Phone Number Label) -->
+  <!-- GIVEAWAY FORM -->
   <div class="modal-overlay" id="formModal" hidden>
     <div class="modal premium-modal" role="dialog" aria-modal="true">
       <button class="modal-close" type="button" data-close-modal="formModal" aria-label="Close">×</button>
@@ -228,7 +227,7 @@
     </div>
   </div>
 
-  <!-- POLICY MODAL (Full Legal Protection) -->
+  <!-- POLICY MODAL -->
   <div class="modal-overlay" id="policyModal" hidden>
     <div class="modal premium-modal legal-modal scrollable-modal" role="dialog" aria-modal="true">
       <button class="modal-close" type="button" data-close-modal="policyModal" aria-label="Close">×</button>
@@ -272,7 +271,7 @@
     </div>
   </div>
 
-  <!-- CONTACT MODAL (With Email, Instagram & Form) -->
+  <!-- CONTACT MODAL -->
   <div class="modal-overlay" id="contactModal" hidden>
     <div class="modal premium-modal contact-modal scrollable-modal" role="dialog" aria-modal="true">
       <button class="modal-close" type="button" data-close-modal="contactModal" aria-label="Close">×</button>
@@ -315,34 +314,14 @@
     </div>
   </div>
 
-  <div class="modal-overlay" id="deleteAccountModal" hidden>
-    <div class="modal premium-modal" role="dialog" aria-modal="true">
-      <button class="modal-close" type="button" data-close-modal="deleteAccountModal" aria-label="Close">×</button>
-      <span class="modal-label">ACCOUNT</span>
-      <h2>Delete Account</h2>
-      <p class="modal-intro">This will permanently delete your Google sign-in account from Cheapster.in. This cannot be undone.</p>
-
-      <form id="deleteAccountForm" novalidate>
-        <div class="field">
-          <label for="deleteReason">Reason (optional)</label>
-          <textarea id="deleteReason" rows="3" maxlength="500" placeholder="Let us know why you're leaving — this is optional."></textarea>
-        </div>
-        <button class="btn btn-wide" id="confirmDeleteBtn" type="submit" style="background: #d9534f; color: #fff;">Permanently Delete My Account</button>
-      </form>
-    </div>
-  </div>
-
-  <!-- FIREBASE (Google Login + Firestore for account-deletion reasons) -->
+  <!-- FIREBASE (Google Login ONLY - Removed Firestore) -->
   <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
   <script src="firebase-config.js"></script>
 
   <script type="module" src="script.js"></script>
 
-  <!-- CUELINKS — auto-converts outbound brand links into affiliate links on click.
-       Replace CUELINKS_PUB_ID below with your real Publisher ID from the Cuelinks dashboard
-       (looks like '543CL529'). Nothing earns commission until this is a real ID. -->
+  <!-- CUELINKS -->
   <script>
     var pubID = 'CUELINKS_PUB_ID';
     (function (d, t) {
