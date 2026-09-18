@@ -149,17 +149,34 @@ function buildLogoChain(store) {
 
 function attachLogoFallback(img, chain, store) {
   let step = 0;
-  img.addEventListener("error", () => {
+  let timer = null;
+
+  function armTimeout() {
+    clearTimeout(timer);
+    // A slow (not erroring, just hanging) request — e.g. a domain with no
+    // apple-touch-icon.png that never actually 404s quickly — shouldn't be
+    // allowed to hold up the logo indefinitely. Give each attempt a short
+    // bounded window, then move on regardless of whether it ever resolves.
+    timer = setTimeout(advance, 800);
+  }
+
+  function advance() {
+    clearTimeout(timer);
     step += 1;
     if (step < chain.length) {
       img.src = chain[step];
+      armTimeout();
       return;
     }
     const fallback = document.createElement("div");
     fallback.className = "store-logo-fallback";
     fallback.textContent = initials(store.name);
     img.replaceWith(fallback);
-  });
+  }
+
+  img.addEventListener("load", () => clearTimeout(timer));
+  img.addEventListener("error", advance);
+  armTimeout();
 }
 
 // Opening brand links with window.open(url, "_blank") is what was breaking
