@@ -15,7 +15,7 @@ const stores = [
   { name: "Nike", domain: "nike.com", logo: "https://upload.wikimedia.org/wikipedia/commons/a/a6/Logo_NIKE.svg", description: "Sports & streetwear", link: "https://www.nike.com/in" },
   { name: "Puma", domain: "puma.com", logo: "https://upload.wikimedia.org/wikipedia/en/d/d7/Puma_Logo.svg", description: "Athletic wear", link: "https://in.puma.com" },
   { name: "Adidas", domain: "adidas.co.in", logo: "https://upload.wikimedia.org/wikipedia/commons/2/20/Adidas_Logo.svg", description: "Sports & fashion", link: "https://www.adidas.co.in" },
-  { name: "Snitch", domain: "", description: "Men's fashion", link: "https://www.snitch.co.in" },
+  { name: "Snitch", domain: "snitch.co.in", description: "Men's fashion", link: "https://www.snitch.co.in" },
   { name: "The Souled Store", domain: "thesouledstore.com", description: "Pop culture merch", link: "https://www.thesouledstore.com" },
   { name: "Bewakoof", domain: "bewakoof.com", description: "Quirky fashion", link: "https://www.bewakoof.com" },
   { name: "Urbanic", domain: "urbanic.com", description: "Gen-Z women's fashion", link: "https://www.urbanic.com" },
@@ -39,7 +39,7 @@ const stores = [
   { name: "WOW Skin Science", domain: "buywow.in", description: "Natural care", link: "https://www.buywow.in" },
 
   // HEALTH & WELLNESS
-  { name: "Plix", domain: "", description: "Plant nutrition", link: "https://www.plixlife.com" },
+  { name: "Plix", domain: "plixlife.com", description: "Plant nutrition", link: "https://www.plixlife.com" },
   { name: "MuscleBlaze", domain: "muscleblaze.com", description: "Sports nutrition", link: "https://www.muscleblaze.com" },
   { name: "Myprotein", domain: "myprotein.co.in", logo: "https://upload.wikimedia.org/wikipedia/commons/7/73/Myprotein_logo.svg", description: "Fitness supplements", link: "https://www.myprotein.co.in" },
   { name: "Kapiva", domain: "kapiva.in", description: "Ayurvedic nutrition", link: "https://www.kapiva.in" },
@@ -137,7 +137,11 @@ function buildLogoChain(store) {
   const chain = [];
   if (store.logo) chain.push(store.logo);
   if (store.domain) {
-    // Seedha Google ki fast Favicon service use karein
+    // apple-touch-icon is usually a proper high-res square logo when the
+    // site has one, and — unlike Google's service — a real 404 fires the
+    // <img> error event correctly, so we actually fall through instead of
+    // getting stuck showing a blurry generic icon.
+    chain.push(`https://${store.domain}/apple-touch-icon.png`);
     chain.push(`https://www.google.com/s2/favicons?domain=${store.domain}&sz=128`);
   }
   return chain;
@@ -352,33 +356,37 @@ document.getElementById("continueBtn").addEventListener("click", () => {
 
 const authBtn = document.getElementById("authBtn");
 const authBtnText = document.getElementById("authBtnText");
+const logoutBtn = document.getElementById("logoutBtn");
+const deleteAccountBtn = document.getElementById("deleteAccountBtn");
+const accountDropdownDivider = document.getElementById("accountDropdownDivider");
 let currentUser = null;
 
 if (window.auth) {
   authBtn.addEventListener("click", () => {
-    if (currentUser) {
-      window.auth.signOut();
-    } else {
-      window.auth.signInWithPopup(window.googleProvider).catch((err) => {
-        console.error("Google sign-in (popup) failed:", err.code, err.message);
-        // Popups are silently blocked in a lot of mobile browsers and in
-        // almost every in-app browser (Instagram/WhatsApp/Facebook webviews).
-        // When that happens, fall back to a full-page redirect flow instead
-        // of just failing — this is what makes login actually work on phones.
-        if (
-          err.code === "auth/popup-blocked" ||
-          err.code === "auth/operation-not-supported-in-this-environment" ||
-          err.code === "auth/popup-closed-by-user" ||
-          err.code === "auth/cancelled-popup-request"
-        ) {
-          window.auth.signInWithRedirect(window.googleProvider);
-        } else if (err.code === "auth/unauthorized-domain") {
-          alert("This domain isn't authorized for login yet (Firebase Console → Authentication → Settings → Authorized domains).");
-        } else {
-          alert("Login failed, please try again.");
-        }
-      });
-    }
+    // Once logged in, this button is just a display of who you're signed
+    // in as — it no longer does anything on click. Logout / Delete Account
+    // live in the hamburger menu instead (see below).
+    if (currentUser) return;
+
+    window.auth.signInWithPopup(window.googleProvider).catch((err) => {
+      console.error("Google sign-in (popup) failed:", err.code, err.message);
+      // Popups are silently blocked in a lot of mobile browsers and in
+      // almost every in-app browser (Instagram/WhatsApp/Facebook webviews).
+      // When that happens, fall back to a full-page redirect flow instead
+      // of just failing — this is what makes login actually work on phones.
+      if (
+        err.code === "auth/popup-blocked" ||
+        err.code === "auth/operation-not-supported-in-this-environment" ||
+        err.code === "auth/popup-closed-by-user" ||
+        err.code === "auth/cancelled-popup-request"
+      ) {
+        window.auth.signInWithRedirect(window.googleProvider);
+      } else if (err.code === "auth/unauthorized-domain") {
+        alert("This domain isn't authorized for login yet (Firebase Console → Authentication → Settings → Authorized domains).");
+      } else {
+        alert("Login failed, please try again.");
+      }
+    });
   });
 
   // Catches the user coming back after signInWithRedirect above.
@@ -389,13 +397,84 @@ if (window.auth) {
   window.auth.onAuthStateChanged((user) => {
     currentUser = user;
     if (user) {
-      authBtnText.textContent = user.displayName ? user.displayName.split(" ")[0] : "Logout";
-      authBtn.title = "Logout";
+      authBtnText.textContent = user.displayName ? user.displayName.split(" ")[0] : "Account";
+      authBtn.title = user.displayName || "Signed in";
       const nameField = document.getElementById("fullName");
       if (nameField && !nameField.value) nameField.value = user.displayName || "";
     } else {
       authBtnText.textContent = "Login";
       authBtn.title = "Login with Google";
+    }
+    // Logout / Delete Account only make sense once signed in.
+    logoutBtn.hidden = !user;
+    deleteAccountBtn.hidden = !user;
+    accountDropdownDivider.hidden = !user;
+  });
+
+  logoutBtn.addEventListener("click", () => window.auth.signOut());
+
+  deleteAccountBtn.addEventListener("click", () => {
+    document.getElementById("deleteReason").value = "";
+    openModal("deleteAccountModal");
+  });
+
+  document.getElementById("deleteAccountForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    if (!currentUser) return;
+
+    const confirmBtn = document.getElementById("confirmDeleteBtn");
+    const reason = document.getElementById("deleteReason").value.trim();
+    const user = currentUser;
+
+    confirmBtn.disabled = true;
+    confirmBtn.textContent = "Deleting...";
+
+    async function logReasonThenDelete() {
+      // Log the deletion (with the optional reason) to Firestore — the
+      // same Firebase project the login itself lives in — before the
+      // account is gone and uid/email are no longer available.
+      if (window.db) {
+        try {
+          await window.db.collection("accountDeletions").add({
+            uid: user.uid,
+            name: user.displayName || "",
+            email: user.email || "",
+            reason: reason || "",
+            deletedAt: firebase.firestore.FieldValue.serverTimestamp()
+          });
+        } catch (err) {
+          // Don't block account deletion just because the log write failed
+          // (e.g. Firestore not enabled yet) — log it and continue.
+          console.error("Could not log account deletion reason:", err);
+        }
+      }
+      await user.delete();
+    }
+
+    try {
+      await logReasonThenDelete();
+      closeModal("deleteAccountModal");
+      alert("Your account has been deleted.");
+    } catch (err) {
+      if (err.code === "auth/requires-recent-login") {
+        // Firebase requires a fresh sign-in before a destructive action
+        // like account deletion. Re-authenticate, then retry once.
+        try {
+          await window.auth.signInWithPopup(window.googleProvider);
+          await logReasonThenDelete();
+          closeModal("deleteAccountModal");
+          alert("Your account has been deleted.");
+        } catch (err2) {
+          console.error("Account deletion failed after re-auth:", err2);
+          alert("Couldn't delete your account. Please try again.");
+        }
+      } else {
+        console.error("Account deletion failed:", err);
+        alert("Couldn't delete your account. Please try again.");
+      }
+    } finally {
+      confirmBtn.disabled = false;
+      confirmBtn.textContent = "Permanently Delete My Account";
     }
   });
 } else {
