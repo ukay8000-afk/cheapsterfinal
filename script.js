@@ -1,249 +1,522 @@
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap');
+// =========================================================
+// CHEAPSTER.IN — 77+ BRANDS DIRECTORY
+// Rebuilt for premium feel + speed: DOM-node rendering,
+// debounced search, layered logo fallback, scroll reveal.
+// =========================================================
 
-/* =========================================================
-   CHEAPSTER.IN — DARK PREMIUM THEME
-   Obsidian + Champagne Gold + Sapphire, classic-luxury with
-   a futuristic edge. No per-card blur, no entrance-animation
-   dependency — built so it can never fail to render.
-   ========================================================= */
+const stores = [
+  // FASHION & STREETWEAR
+  { name: "Amazon", domain: "amazon.in", logo: "https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg", description: "Everything marketplace", link: "https://www.amazon.in" },
+  { name: "Flipkart", domain: "flipkart.com", logo: "https://upload.wikimedia.org/wikipedia/en/7/7a/Flipkart_logo.svg", description: "Shopping marketplace", link: "https://www.flipkart.com" },
+  { name: "Myntra", domain: "myntra.com", logo: "https://upload.wikimedia.org/wikipedia/commons/b/bc/Myntra_Logo.png", description: "Fashion & lifestyle", link: "https://www.myntra.com" },
+  { name: "AJIO", domain: "ajio.com", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/AJIO_Logo.svg/2560px-AJIO_Logo.svg.png", description: "Fashion destination", link: "https://www.ajio.com" },
+  { name: "Tata CLiQ", domain: "tatacliq.com", logo: "https://upload.wikimedia.org/wikipedia/commons/e/e3/Tata_CLiQ_Logo.svg", description: "Multi-category retail", link: "https://www.tatacliq.com" },
+  { name: "Meesho", domain: "meesho.com", description: "Value shopping", link: "https://www.meesho.com" },
+  { name: "Nike", domain: "nike.com", logo: "https://upload.wikimedia.org/wikipedia/commons/a/a6/Logo_NIKE.svg", description: "Sports & streetwear", link: "https://www.nike.com/in" },
+  { name: "Puma", domain: "puma.com", logo: "https://upload.wikimedia.org/wikipedia/en/d/d7/Puma_Logo.svg", description: "Athletic wear", link: "https://in.puma.com" },
+  { name: "Adidas", domain: "adidas.co.in", logo: "https://upload.wikimedia.org/wikipedia/commons/2/20/Adidas_Logo.svg", description: "Sports & fashion", link: "https://www.adidas.co.in" },
+  { name: "Snitch", domain: "snitch.co.in", description: "Men's fashion", link: "https://www.snitch.co.in" },
+  { name: "The Souled Store", domain: "thesouledstore.com", description: "Pop culture merch", link: "https://www.thesouledstore.com" },
+  { name: "Bewakoof", domain: "bewakoof.com", description: "Quirky fashion", link: "https://www.bewakoof.com" },
+  { name: "Urbanic", domain: "urbanic.com", description: "Gen-Z women's fashion", link: "https://www.urbanic.com" },
+  { name: "Beyoung", domain: "beyoung.in", description: "Everyday fashion", link: "https://beyoung.in" },
+  { name: "XYXX", domain: "xyxxcrew.com", description: "Men's innerwear", link: "https://xyxxcrew.com" },
 
-:root {
-  --obsidian: #090d14;
-  --obsidian-raised: #111826;
-  --panel-solid: #131b28;
-  --panel-solid-hover: #182233;
-  --sapphire: #1c3f66;
-  --sapphire-glow: #5b9eea;
-  --champagne: #cda15c;
-  --champagne-bright: #eccd8f;
-  --platinum: #aab6c4;
-  --ink: #f3f6f9;
-  --muted: #8b98a8;
-  --faint: #566275;
-  --line: rgba(255, 255, 255, 0.08);
-  --line-gold: rgba(205, 161, 92, 0.3);
-  --glow-line: rgba(91, 158, 234, 0.35);
-  --success: #4fbf82;
-  --radius-card: 16px;
-  --radius-modal: 22px;
-  --shadow-soft: 0 10px 26px rgba(0, 0, 0, 0.4);
-  --shadow-lift: 0 20px 45px rgba(0, 0, 0, 0.55);
+  // BEAUTY & GROOMING
+  { name: "Nykaa", domain: "nykaa.com", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Nykaa_Logo.svg/2560px-Nykaa_Logo.svg.png", description: "Beauty & cosmetics", link: "https://www.nykaa.com" },
+  { name: "Purplle", domain: "purplle.com", description: "Beauty shopping", link: "https://www.purplle.com" },
+  { name: "MyGlamm", domain: "myglamm.com", description: "Makeup & beauty", link: "https://www.myglamm.com" },
+  { name: "Mamaearth", domain: "mamaearth.in", description: "Toxin-free care", link: "https://www.mamaearth.in" },
+  { name: "Minimalist", domain: "beminimalist.co", description: "Science skincare", link: "https://www.beminimalist.co" },
+  { name: "The Derma Co", domain: "thedermaco.com", description: "Dermatological care", link: "https://www.thedermaco.com" },
+  { name: "Dot & Key", domain: "dotandkey.com", description: "Skincare", link: "https://www.dotandkey.com" },
+  { name: "Plum", domain: "plumgoodness.com", description: "Vegan beauty", link: "https://www.plumgoodness.com" },
+  { name: "Sugar Cosmetics", domain: "sugarcosmetics.com", description: "Makeup brand", link: "https://www.sugarcosmetics.com" },
+  { name: "Pilgrim", domain: "discoverpilgrim.com", description: "Global beauty secrets", link: "https://www.discoverpilgrim.com" },
+  { name: "Foxtale", domain: "foxtale.in", description: "Skincare essentials", link: "https://www.foxtale.in" },
+  { name: "MCaffeine", domain: "mcaffeine.com", description: "Caffeinated care", link: "https://www.mcaffeine.com" },
+  { name: "Aqualogica", domain: "aqualogica.in", description: "Hydration skincare", link: "https://www.aqualogica.in" },
+  { name: "WOW Skin Science", domain: "buywow.in", description: "Natural care", link: "https://www.buywow.in" },
+
+  // HEALTH & WELLNESS
+  { name: "Plix", domain: "plixlife.com", description: "Plant nutrition", link: "https://www.plixlife.com" },
+  { name: "MuscleBlaze", domain: "muscleblaze.com", description: "Sports nutrition", link: "https://www.muscleblaze.com" },
+  { name: "Myprotein", domain: "myprotein.co.in", logo: "https://upload.wikimedia.org/wikipedia/commons/7/73/Myprotein_logo.svg", description: "Fitness supplements", link: "https://www.myprotein.co.in" },
+  { name: "Kapiva", domain: "kapiva.in", description: "Ayurvedic nutrition", link: "https://www.kapiva.in" },
+  { name: "HealthKart", domain: "healthkart.com", description: "Health supplements", link: "https://www.healthkart.com" },
+
+  // QUICK COMMERCE & FOOD
+  { name: "Blinkit", domain: "blinkit.com", logo: "https://upload.wikimedia.org/wikipedia/en/thumb/7/7b/Blinkit_logo.svg/1200px-Blinkit_logo.svg.png", description: "10-min delivery", link: "https://blinkit.com" },
+  { name: "Swiggy", domain: "swiggy.com", logo: "https://upload.wikimedia.org/wikipedia/en/1/12/Swiggy_logo.svg", description: "Food & Instamart", link: "https://www.swiggy.com" },
+  { name: "Zomato", domain: "zomato.com", description: "Food delivery", link: "https://www.zomato.com" },
+  { name: "Zepto", domain: "zeptonow.com", description: "Quick commerce", link: "https://www.zeptonow.com" },
+  { name: "BigBasket", domain: "bigbasket.com", description: "Online grocery", link: "https://www.bigbasket.com" },
+  { name: "EatSure", domain: "eatsure.com", description: "Food delivery", link: "https://www.eatsure.com" },
+  { name: "Domino's", domain: "dominos.co.in", logo: "https://upload.wikimedia.org/wikipedia/commons/3/3e/Domino%27s_pizza_logo.svg", description: "Pizza delivery", link: "https://www.dominos.co.in" },
+  { name: "Pizza Hut", domain: "pizzahut.co.in", logo: "https://upload.wikimedia.org/wikipedia/sco/d/d2/Pizza_Hut_logo.svg", description: "Pizza delivery", link: "https://www.pizzahut.co.in" },
+
+  // ELECTRONICS & TECH
+  { name: "Croma", domain: "croma.com", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Croma_Logo.svg/2560px-Croma_Logo.svg.png", description: "Electronics", link: "https://www.croma.com" },
+  { name: "Reliance Digital", domain: "reliancedigital.in", description: "Tech retail", link: "https://www.reliancedigital.in" },
+  { name: "Samsung", domain: "samsung.com", logo: "https://upload.wikimedia.org/wikipedia/commons/2/24/Samsung_Logo.svg", description: "Mobiles & electronics", link: "https://www.samsung.com/in" },
+  { name: "OnePlus", domain: "oneplus.in", logo: "https://upload.wikimedia.org/wikipedia/commons/f/f8/OnePlus_logo.svg", description: "Smartphones", link: "https://www.oneplus.in" },
+  { name: "boAt", domain: "boat-lifestyle.com", description: "Audio & wearables", link: "https://www.boat-lifestyle.com" },
+  { name: "Noise", domain: "gonoise.com", description: "Smartwatches", link: "https://www.gonoise.com" },
+  { name: "Nothing", domain: "nothing.tech", logo: "https://upload.wikimedia.org/wikipedia/commons/8/87/Nothing_logo.svg", description: "Innovative tech", link: "https://in.nothing.tech" },
+  { name: "JBL", domain: "jbl.com", logo: "https://upload.wikimedia.org/wikipedia/commons/2/2d/JBL_logo.svg", description: "Premium audio", link: "https://in.jbl.com" },
+  { name: "Apple", domain: "apple.com", logo: "https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg", description: "Premium devices", link: "https://www.apple.com/in" },
+
+  // ACCESSORIES
+  { name: "Lenskart", domain: "lenskart.com", description: "Eyewear", link: "https://www.lenskart.com" },
+  { name: "Giva", domain: "giva.co", description: "Silver jewellery", link: "https://www.giva.co" },
+  { name: "Fastrack", domain: "fastrack.in", description: "Youth accessories", link: "https://www.fastrack.in" },
+  { name: "Tanishq", domain: "tanishq.co.in", description: "Fine jewellery", link: "https://www.tanishq.co.in" },
+
+  // TRAVEL
+  { name: "MakeMyTrip", domain: "makemytrip.com", description: "Flights & hotels", link: "https://www.makemytrip.com" },
+  { name: "Goibibo", domain: "goibibo.com", description: "Travel bookings", link: "https://www.goibibo.com" },
+  { name: "Agoda", domain: "agoda.com", logo: "https://upload.wikimedia.org/wikipedia/commons/1/18/Agoda_logo.svg", description: "Hotels & stays", link: "https://www.agoda.com" },
+  { name: "Cleartrip", domain: "cleartrip.com", description: "Flights & travel", link: "https://www.cleartrip.com" },
+  { name: "Oyo Rooms", domain: "oyorooms.com", logo: "https://upload.wikimedia.org/wikipedia/commons/1/19/OYO_Rooms_%28logo%29.png", description: "Budget stays", link: "https://www.oyorooms.com" },
+  { name: "Booking.com", domain: "booking.com", logo: "https://upload.wikimedia.org/wikipedia/commons/b/be/Booking.com_logo.svg", description: "Global travel", link: "https://www.booking.com" },
+  { name: "RedBus", domain: "redbus.in", description: "Bus bookings", link: "https://www.redbus.in" },
+
+  // PHARMACY
+  { name: "Tata 1mg", domain: "1mg.com", description: "Online pharmacy", link: "https://www.1mg.com" },
+  { name: "Apollo 24|7", domain: "apollo247.com", description: "Healthcare", link: "https://www.apollo247.com" },
+  { name: "Netmeds", domain: "netmeds.com", description: "Medicine delivery", link: "https://www.netmeds.com" },
+
+  // FINANCE & CARDS
+  { name: "Upstox", domain: "upstox.com", description: "Trading app", link: "https://upstox.com" },
+  { name: "Groww", domain: "groww.in", description: "Investing platform", link: "https://groww.in" },
+  { name: "Angel One", domain: "angelone.in", description: "Stock broking", link: "https://www.angelone.in" },
+  { name: "BankBazaar", domain: "bankbazaar.com", description: "Financial marketplace", link: "https://www.bankbazaar.com" },
+  { name: "SBI Credit Cards", domain: "sbicard.com", description: "Credit cards", link: "https://www.sbicard.com" },
+
+  // SOFTWARE & DIGITAL
+  { name: "Hostinger", domain: "hostinger.in", logo: "https://upload.wikimedia.org/wikipedia/commons/f/ff/Hostinger_logo.svg", description: "Web hosting", link: "https://www.hostinger.in" },
+  { name: "Bluehost", domain: "bluehost.in", logo: "https://upload.wikimedia.org/wikipedia/commons/d/d7/Bluehost_logo.svg", description: "Hosting services", link: "https://www.bluehost.in" },
+  { name: "Shopify", domain: "shopify.in", logo: "https://upload.wikimedia.org/wikipedia/commons/0/0e/Shopify_logo_2018.svg", description: "E-commerce platform", link: "https://www.shopify.com" },
+  { name: "Canva", domain: "canva.com", logo: "https://upload.wikimedia.org/wikipedia/commons/0/08/Canva_icon_2021.svg", description: "Design tool", link: "https://www.canva.com" },
+  { name: "Grammarly", domain: "grammarly.com", logo: "https://upload.wikimedia.org/wikipedia/commons/4/4b/Grammarly_logo.svg", description: "Writing assistant", link: "https://www.grammarly.com" },
+  { name: "ChatGPT", domain: "openai.com", logo: "https://upload.wikimedia.org/wikipedia/commons/0/04/ChatGPT_logo.svg", description: "AI tools", link: "https://chatgpt.com" },
+  { name: "Adobe", domain: "adobe.com", logo: "https://upload.wikimedia.org/wikipedia/commons/b/b6/Adobe_Logo_Square.svg", description: "Creative software", link: "https://www.adobe.com" }
+];
+
+const grid = document.getElementById("storeGrid");
+const searchInput = document.getElementById("searchInput");
+const resultPill = document.getElementById("resultPill");
+const heroStoreCount = document.getElementById("heroStoreCount");
+const emptyState = document.getElementById("emptyState");
+const brandSelect = document.getElementById("brandSelect");
+
+// ---------- utilities ----------
+
+function initials(name) {
+  return name.substring(0, 2).toUpperCase();
 }
 
-*, *::before, *::after { box-sizing: border-box; }
-
-html { scroll-behavior: smooth; }
-
-body {
-  margin: 0;
-  color: var(--platinum);
-  background-color: var(--obsidian);
-  background-image:
-    radial-gradient(circle at 12% 8%, rgba(91, 158, 234, 0.10) 0%, transparent 42%),
-    radial-gradient(circle at 88% 78%, rgba(205, 161, 92, 0.08) 0%, transparent 46%),
-    linear-gradient(180deg, #0b1119 0%, #090d14 55%, #07090f 100%);
-  font-family: "DM Sans", sans-serif;
-  overflow-x: hidden;
-  min-height: 100vh;
-  position: relative;
+// Debounce so the grid doesn't re-render on every single keystroke — this
+// alone removes most of the jank people feel while typing in the search box.
+function debounce(fn, delay = 160) {
+  let timer;
+  return (...args) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn(...args), delay);
+  };
 }
 
-/* Festive bokeh texture — soft, classy "string light" glow, baked as a
-   static SVG (decoded once, zero runtime blur cost). Far cheaper and
-   far more premium-looking than a flat dot/star pattern. */
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  opacity: 0.55;
-  background-image: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='320'%20height='320'%3E%3Ccircle%20cx='46'%20cy='58'%20r='20'%20fill='%23cda15c'%20opacity='0.05'/%3E%3Ccircle%20cx='46'%20cy='58'%20r='9'%20fill='%23cda15c'%20opacity='0.10'/%3E%3Ccircle%20cx='46'%20cy='58'%20r='3'%20fill='%23eccd8f'%20opacity='0.20'/%3E%3Ccircle%20cx='244'%20cy='96'%20r='17'%20fill='%235b9eea'%20opacity='0.05'/%3E%3Ccircle%20cx='244'%20cy='96'%20r='8'%20fill='%235b9eea'%20opacity='0.09'/%3E%3Ccircle%20cx='244'%20cy='96'%20r='3'%20fill='%23bcdcff'%20opacity='0.17'/%3E%3Ccircle%20cx='128'%20cy='236'%20r='15'%20fill='%23cda15c'%20opacity='0.04'/%3E%3Ccircle%20cx='128'%20cy='236'%20r='7'%20fill='%23eccd8f'%20opacity='0.09'/%3E%3Ccircle%20cx='128'%20cy='236'%20r='2.5'%20fill='%23f4e2b8'%20opacity='0.16'/%3E%3Ccircle%20cx='288'%20cy='276'%20r='13'%20fill='%235b9eea'%20opacity='0.04'/%3E%3Ccircle%20cx='288'%20cy='276'%20r='6'%20fill='%235b9eea'%20opacity='0.08'/%3E%3C/svg%3E");
-  background-size: 320px 320px;
+// Build an ordered list of logo sources to try for a store: its own curated
+// logo, then Google's favicon service as a reliable fallback (near-universal
+// coverage, tiny payload, fast). NOTE: Clearbit's logo.clearbit.com is not
+// used — that service was permanently shut down (Dec 2025), and requests to
+// a dead host were exactly what made logos disappear and the page feel slow:
+// every browser had to wait for that connection to fail before trying
+// anything else.
+function buildLogoChain(store) {
+  const chain = [];
+  if (store.logo) chain.push(store.logo);
+  if (store.domain) {
+    // apple-touch-icon is usually a proper high-res square logo when the
+    // site has one, and — unlike Google's service — a real 404 fires the
+    // <img> error event correctly, so we actually fall through instead of
+    // getting stuck showing a blurry generic icon.
+    chain.push(`https://${store.domain}/apple-touch-icon.png`);
+    chain.push(`https://www.google.com/s2/favicons?domain=${store.domain}&sz=128`);
+  }
+  return chain;
 }
 
-body > * { position: relative; z-index: 1; }
-
-.page-noise { position: fixed; inset: 0; z-index: 0; pointer-events: none; background: transparent; }
-.ambient { position: fixed; z-index: 0; pointer-events: none; border-radius: 50%; filter: blur(90px); opacity: 0.45; }
-.ambient-left { top: -120px; left: -140px; width: 380px; height: 380px; background: radial-gradient(circle, rgba(91, 158, 234, 0.22), transparent 70%); }
-.ambient-right { top: 25%; right: -180px; width: 440px; height: 440px; background: radial-gradient(circle, rgba(205, 161, 92, 0.16), transparent 70%); }
-
-body.modal-open { overflow: hidden; }
-button, input, select, textarea { font: inherit; outline: none; }
-button { cursor: pointer; }
-a { color: inherit; text-decoration: none; }
-[hidden] { display: none !important; }
-
-@media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
-  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+function attachLogoFallback(img, chain, store) {
+  let step = 0;
+  img.addEventListener("error", () => {
+    step += 1;
+    if (step < chain.length) {
+      img.src = chain[step];
+      return;
+    }
+    const fallback = document.createElement("div");
+    fallback.className = "store-logo-fallback";
+    fallback.textContent = initials(store.name);
+    img.replaceWith(fallback);
+  });
 }
 
-/* Top Live Banner */
-.live-contest-banner { background: linear-gradient(90deg, var(--sapphire), #142a44); color: var(--champagne-bright); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; display: flex; justify-content: center; align-items: center; gap: 8px; padding: 7px 0; border-bottom: 1px solid var(--line-gold); }
-.blinking-dot { width: 6px; height: 6px; background-color: #7fe3ab; border-radius: 50%; box-shadow: 0 0 10px #7fe3ab; animation: blink 1.5s infinite ease-in-out; }
-@keyframes blink { 0%, 100% { opacity: 0.35; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.15); } }
+// Opening brand links with window.open(url, "_blank") is what was breaking
+// this on phones: mobile browsers (and especially in-app browsers like the
+// WhatsApp/Instagram webview) frequently block window.open() unless it's
+// treated as a "trusted" popup, so the tab either never opens or opens after
+// a noticeable delay. A real <a> click is treated as a normal link tap by
+// every browser, so it opens instantly and reliably everywhere. We also
+// fall back to the brand's own domain when no real affiliate link is set
+// (a bare "#" was going nowhere, which is why cards looked broken).
+function openStoreLink(store) {
+  let url = store.link;
+  if (!url || url === "#") {
+    url = store.domain ? `https://www.${store.domain}` : null;
+  }
+  if (!url) return;
 
-/* Header */
-.site-header { position: sticky; top: 0; z-index: 100; background: rgba(9, 13, 20, 0.82); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-bottom: 1px solid var(--line); transition: box-shadow .3s ease, background-color .3s ease; }
-.site-header.is-scrolled { background: rgba(9, 13, 20, 0.96); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4); }
-.site-header::after { content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 1px; background: linear-gradient(90deg, transparent, var(--champagne), var(--sapphire-glow), transparent); background-size: 200% 100%; opacity: 0.55; animation: shimmerLine 7s linear infinite; }
-@keyframes shimmerLine { to { background-position: -200% 0; } }
-.header-inner { width: min(1220px, calc(100% - 34px)); min-height: 70px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; }
-.brand { display: flex; align-items: center; gap: 10px; }
-.css-logo { width: 38px; height: 38px; background: linear-gradient(145deg, var(--sapphire), #0d2138); border-radius: 10px; border: 1px solid var(--line-gold); color: var(--champagne-bright); font-family: 'Manrope', sans-serif; font-size: 22px; font-weight: 800; display: flex; justify-content: center; align-items: center; padding-right: 2px; box-shadow: var(--shadow-soft); }
-.css-logo span { color: var(--champagne); margin-left: 2px; }
-.brand-wordmark { color: var(--ink); font-size: 19px; font-weight: 800; }
-.brand-wordmark span { color: var(--champagne); }
-.header-actions { display: flex; gap: 10px; align-items: center; }
-.hamburger-btn { width: 42px; height: 42px; border-radius: 100px; border: 1px solid var(--line); background: var(--panel-solid); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; cursor: pointer; }
-.hamburger-btn:hover { border-color: var(--line-gold); }
-.hamburger-btn span { width: 18px; height: 2px; background: var(--platinum); border-radius: 2px; transition: transform .2s ease, opacity .2s ease; }
-.hamburger-btn[aria-expanded="true"] span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
-.hamburger-btn[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
-.hamburger-btn[aria-expanded="true"] span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
-.header-dropdown { position: absolute; top: calc(100% + 8px); right: 17px; background: var(--panel-solid); border: 1px solid var(--line-gold); border-radius: 14px; box-shadow: var(--shadow-lift); display: flex; flex-direction: column; padding: 8px; min-width: 220px; z-index: 110; }
-.header-dropdown button { background: none; border: none; text-align: left; color: var(--platinum); font-size: 13px; font-weight: 600; padding: 10px 12px; border-radius: 8px; cursor: pointer; }
-.header-dropdown button:hover { background: var(--panel-solid-hover); color: var(--champagne-bright); }
-
-/* Buttons */
-.btn { min-height: 42px; padding: 0 16px; border-radius: 100px; border: none; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 700; font-size: 13px; transition: transform .2s ease, box-shadow .2s ease; }
-.btn-gold { color: #14100a; background: linear-gradient(135deg, var(--champagne-bright) 0%, var(--champagne) 100%); box-shadow: 0 6px 18px rgba(205, 161, 92, 0.28); }
-.btn-gold:hover { transform: translateY(-1px); box-shadow: 0 10px 24px rgba(205, 161, 92, 0.38); }
-.btn-google { color: var(--ink); background: var(--panel-solid); border: 1px solid var(--line); }
-.btn-google:hover { border-color: var(--line-gold); }
-.google-icon { width: 18px; }
-
-/* Hero */
-.hero { text-align: center; padding: 64px 20px 44px; position: relative; }
-.hero-badge { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border: 1px solid var(--line-gold); border-radius: 999px; color: var(--champagne-bright); background: rgba(205, 161, 92, 0.08); font-size: 10px; font-weight: 800; letter-spacing: 1.6px; }
-.pulse-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--champagne); }
-.hero h1 { margin: 20px 0 14px; color: var(--ink); font-size: clamp(34px, 6vw, 60px); font-weight: 800; line-height: 1.12; letter-spacing: -0.5px; }
-.hero h1 span { color: var(--champagne-bright); }
-
-.festive-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  margin: 0 auto 18px;
-  padding: 8px 18px;
-  background: rgba(91, 158, 234, 0.08);
-  border: 1px solid rgba(91, 158, 234, 0.28);
-  border-radius: 50px;
-  color: var(--sapphire-glow);
-  font-size: 13px;
-  font-weight: 600;
-}
-.festive-sparkle { font-size: 14px; }
-.hero-copy { max-width: 560px; margin: 0 auto 30px; color: var(--muted); font-size: 14px; line-height: 1.6; }
-
-/* Search — solid panel, no blur (kept light for speed) */
-.search-shell { position: relative; max-width: 600px; margin: 0 auto; }
-.search-input {
-  width: 100%; height: 58px; padding: 0 50px; border-radius: 100px;
-  background: var(--panel-solid); border: 1px solid var(--line);
-  color: var(--ink); font-size: 15px; box-shadow: var(--shadow-soft);
-  transition: border-color .2s ease, box-shadow .2s ease;
-}
-.search-input::placeholder { color: var(--faint); }
-.search-input:focus { border-color: var(--sapphire-glow); box-shadow: 0 0 0 3px rgba(91, 158, 234, 0.15), var(--shadow-soft); }
-.search-leading { position: absolute; left: 20px; top: 19px; width: 20px; color: var(--muted); }
-.search-leading svg { fill: none; stroke: currentColor; stroke-width: 2; }
-.hero-meta { margin-top: 20px; font-size: 11px; color: var(--muted); font-weight: 600; display: flex; justify-content: center; gap: 10px; align-items: center; }
-.trust-strip { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 22px; }
-.trust-item { background: var(--panel-solid); border: 1px solid var(--line); border-radius: 100px; padding: 7px 14px; font-size: 12px; color: var(--platinum); white-space: nowrap; }
-.meta-dot { width: 3px; height: 3px; border-radius: 50%; background: var(--faint); display: inline-block; }
-
-/* Grid & Cards — solid backgrounds only. No backdrop-filter here: with
-   70+ cards on screen, blurring each one is what tanks phones. */
-.directory-section { width: min(1220px, calc(100% - 34px)); margin: 0 auto; padding-bottom: 80px; }
-.section-top { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 25px; }
-.section-label { color: var(--champagne); font-size: 11px; font-weight: 800; letter-spacing: 1.6px; }
-.section-top h2 { margin: 5px 0 0; color: var(--ink); font-size: 26px; font-weight: 800; }
-.result-pill { padding: 6px 14px; border: 1px solid var(--line); border-radius: 20px; font-size: 11px; background: var(--panel-solid); color: var(--muted); }
-
-.store-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 16px; }
-
-.store-card {
-  padding: 20px 15px; text-align: center; border: 1px solid var(--line); border-radius: var(--radius-card);
-  background: var(--panel-solid);
-  box-shadow: var(--shadow-soft);
-  transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease, background-color .22s ease;
-  cursor: pointer;
-  contain: content;
-}
-.store-card:hover { transform: translateY(-5px); border-color: var(--line-gold); background: var(--panel-solid-hover); box-shadow: 0 16px 34px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(91, 158, 234, 0.15); }
-
-.store-logo-frame { width: 66px; height: 66px; margin: 0 auto 15px; background: #fff; border-radius: 14px; padding: 10px; display: grid; place-items: center; box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35); }
-.store-logo { width: 100%; height: 100%; max-width: 100%; max-height: 100%; object-fit: contain; object-position: center center; }
-.store-logo-fallback { width: 100%; height: 100%; display: grid; place-items: center; background: linear-gradient(135deg, var(--sapphire), var(--sapphire-glow)); color: #fff; font-size: 17px; font-weight: 800; border-radius: 10px; }
-
-.store-name { color: var(--ink); font-size: 15px; font-weight: 700; margin: 0 0 5px; }
-.store-meta { color: var(--muted); font-size: 11px; min-height: 30px; margin: 0 0 15px; }
-.shop-button { width: 100%; padding: 10px; border-radius: 10px; background: rgba(255, 255, 255, 0.04); color: var(--champagne-bright); border: 1px solid var(--line); font-size: 12px; font-weight: 700; transition: background .2s ease, color .2s ease, box-shadow .2s ease; }
-.store-card:hover .shop-button { background: linear-gradient(135deg, var(--champagne-bright), var(--champagne)); color: #14100a; box-shadow: 0 6px 16px rgba(205, 161, 92, 0.3); border-color: transparent; }
-
-.empty-state { text-align: center; padding: 60px 20px; color: var(--muted); }
-.empty-state h3 { color: var(--ink); margin-bottom: 8px; }
-
-/* Reveal-on-scroll — one deliberate section-level moment, not per-card.
-   Progressive enhancement: sections are visible by default; only when
-   JS successfully arms them (via .reveal-armed) do they animate in. */
-.reveal-on-scroll.reveal-armed { opacity: 0; transform: translateY(18px); transition: opacity .6s ease, transform .6s ease; }
-.reveal-on-scroll.reveal-armed.in-view { opacity: 1; transform: none; }
-
-/* Modals */
-.modal-overlay { position: fixed; inset: 0; z-index: 1000; background: rgba(4, 6, 10, 0.7); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); display: grid; place-items: center; padding: 20px; }
-.premium-modal { position: relative; width: min(480px, 100%); padding: 30px; background: var(--obsidian-raised); border: 1px solid var(--line-gold); border-radius: var(--radius-modal); max-height: 90vh; overflow-y: auto; box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6); }
-.modal-close { position: absolute; top: 15px; right: 20px; font-size: 26px; background: transparent; border: none; color: var(--muted); line-height: 1; }
-.modal-close:hover { color: var(--ink); }
-.modal-icon { width: 50px; height: 50px; background: rgba(205, 161, 92, 0.1); color: var(--champagne-bright); font-size: 22px; display: grid; place-items: center; border-radius: 12px; margin-bottom: 15px; border: 1px solid var(--line-gold); }
-.modal-label { font-size: 10px; font-weight: 800; color: var(--sapphire-glow); letter-spacing: 1.4px; }
-.premium-modal h2 { margin: 5px 0 15px; font-size: 22px; color: var(--ink); }
-.modal-intro { color: var(--muted); font-size: 13px; margin: -6px 0 18px; }
-
-.field { margin-bottom: 15px; }
-.field label { display: block; font-size: 11px; color: var(--muted); margin-bottom: 5px; font-weight: 700; }
-.field input, .field select, .field textarea { width: 100%; padding: 12px 14px; border-radius: 10px; background: var(--panel-solid); border: 1px solid var(--line); color: var(--ink); font-family: inherit; font-size: 14px; }
-.field input:focus, .field select:focus, .field textarea:focus { border-color: var(--sapphire-glow); }
-
-.field select option { background-color: var(--obsidian-raised); color: var(--ink); padding: 10px; }
-
-.btn-wide { width: 100%; min-height: 48px; border-radius: 12px; }
-.form-note { text-align: center; font-size: 10px; color: var(--faint); margin-top: 15px; }
-.legal-copy p { font-size: 13px; margin-bottom: 15px; line-height: 1.65; color: var(--muted); }
-.legal-copy strong { color: var(--ink); }
-.divider-label { text-align: center; margin: 25px 0 15px; position: relative; }
-.divider-label::before { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: var(--line); }
-.divider-label span { background: var(--obsidian-raised); padding: 0 10px; position: relative; font-size: 10px; font-weight: 800; color: var(--muted); letter-spacing: 1px; }
-.welcome-highlight { display: flex; gap: 12px; margin: 0 0 19px; padding: 14px 15px; border: 1px solid var(--line-gold); border-radius: 14px; background: rgba(205, 161, 92, 0.08); }
-.highlight-star { color: var(--champagne-bright); font-size: 17px; }
-.welcome-highlight strong { display: block; color: var(--ink); font-size: 12px; }
-.welcome-highlight small { display: block; margin-top: 3px; color: var(--muted); font-size: 11px; }
-.success-mark { width: 68px; height: 68px; margin: 0 auto 17px; display: grid; place-items: center; color: var(--success); background: rgba(79, 191, 130, .1); border: 1px solid rgba(79, 191, 130, .25); border-radius: 50%; font-size: 28px; font-weight: 800; }
-.success-view { text-align: center; }
-.success-view h3 { margin: 0 0 7px; color: var(--ink); font-size: 18px; }
-.success-view p { margin: 0 auto 22px; color: var(--muted); font-size: 12px; line-height: 1.65; }
-
-/* Footer */
-.site-footer { border-top: 1px solid var(--line); background: rgba(9, 13, 20, 0.7); padding: 40px 20px 20px; margin-top: 40px; }
-.footer-main { width: min(1220px, 100%); margin: 0 auto; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 30px; }
-.footer-brand-block { max-width: 320px; }
-.footer-brand-block p { font-size: 12px; color: var(--muted); margin-top: 15px; line-height: 1.6; }
-.footer-legal-note { font-size: 10.5px !important; color: var(--faint) !important; margin-top: 15px !important; border-top: 1px solid var(--line); padding-top: 15px; }
-.footer-nav button { background: none; border: none; color: var(--muted); font-size: 12px; margin-left: 15px; cursor: pointer; }
-.footer-nav button:hover { color: var(--champagne-bright); }
-.footer-bottom { width: min(1220px, 100%); margin: 20px auto 0; padding-top: 20px; border-top: 1px solid var(--line); display: flex; justify-content: space-between; font-size: 11px; color: var(--faint); }
-
-@media (max-width: 768px) {
-  .hero { padding: 40px 15px; }
-  .store-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
-  .offer-text-hide, #authBtnText, .brand-wordmark { display: none; }
-  .btn { padding: 0 12px; }
+  const a = document.createElement("a");
+  a.href = url;
+  a.target = "_blank";
+  a.rel = "noopener noreferrer";
+  a.style.display = "none";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
 }
 
-@media (max-width: 360px) {
-  .store-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
-  .store-card { padding: 14px 8px; }
+// ---------- rendering ----------
+
+function buildCard(store, index) {
+  const card = document.createElement("div");
+  card.className = "store-card";
+
+  const frame = document.createElement("div");
+  frame.className = "store-logo-frame";
+
+  const chain = buildLogoChain(store);
+  if (chain.length) {
+    const img = document.createElement("img");
+    img.className = "store-logo";
+    img.alt = store.name;
+    img.width = 100;
+    img.height = 100;
+    img.decoding = "async";
+    // First couple of rows load eagerly at high priority (what the user
+    // sees immediately); everything below the fold is lazy so it doesn't
+    // compete for bandwidth with what's on screen.
+    if (index < 12) {
+      img.loading = "eager";
+      img.fetchPriority = "high";
+    } else {
+      img.loading = "lazy";
+      img.fetchPriority = "low";
+    }
+    img.src = chain[0];
+    attachLogoFallback(img, chain, store);
+    frame.appendChild(img);
+  } else {
+    const fallback = document.createElement("div");
+    fallback.className = "store-logo-fallback";
+    fallback.textContent = initials(store.name);
+    frame.appendChild(fallback);
+  }
+
+  const name = document.createElement("h3");
+  name.className = "store-name";
+  name.textContent = store.name;
+
+  const meta = document.createElement("p");
+  meta.className = "store-meta";
+  meta.textContent = store.description;
+
+  const button = document.createElement("button");
+  button.type = "button";
+  button.className = "shop-button";
+  button.textContent = "Shop Now";
+
+  card.append(frame, name, meta, button);
+
+  card.addEventListener("click", () => {
+    openStoreLink(store);
+    const matchingOption = [...brandSelect.options].find(opt => opt.value === store.name);
+    if (matchingOption) brandSelect.value = matchingOption.value;
+    openModal("formModal");
+  });
+
+  return card;
+}
+
+function renderStores(storeList) {
+  // Build off-DOM first, then attach once — a single reflow instead of one
+  // per card.
+  const fragment = document.createDocumentFragment();
+  storeList.forEach((store, i) => fragment.appendChild(buildCard(store, i)));
+  grid.innerHTML = "";
+  grid.appendChild(fragment);
+
+  const count = storeList.length;
+  if (resultPill) resultPill.textContent = `${count} brands`;
+  if (heroStoreCount) heroStoreCount.textContent = count;
+  if (emptyState) emptyState.hidden = count !== 0;
+}
+
+const handleSearch = debounce((query) => {
+  const q = query.toLowerCase().trim();
+  const filtered = stores.filter(store =>
+    store.name.toLowerCase().includes(q) ||
+    store.description.toLowerCase().includes(q)
+  );
+  renderStores(filtered);
+});
+
+searchInput.addEventListener("input", (e) => handleSearch(e.target.value));
+
+stores.forEach(store => {
+  const option = document.createElement("option");
+  option.value = store.name;
+  option.textContent = store.name;
+  brandSelect.appendChild(option);
+});
+
+// ---------- modals ----------
+
+function openModal(id) {
+  const modal = document.getElementById(id);
+  if (modal) { modal.hidden = false; document.body.classList.add("modal-open"); }
+}
+
+function closeModal(id) {
+  const modal = document.getElementById(id);
+  if (modal) { modal.hidden = true; document.body.classList.remove("modal-open"); }
+}
+
+document.querySelectorAll("[data-close-modal]").forEach(btn => {
+  btn.addEventListener("click", () => closeModal(btn.dataset.closeModal));
+});
+
+document.querySelectorAll(".modal-overlay").forEach(overlay => {
+  overlay.addEventListener("click", (e) => {
+    if (e.target === overlay) {
+      overlay.hidden = true;
+      document.body.classList.remove("modal-open");
+    }
+  });
+});
+
+document.getElementById("headerOfferBtn").addEventListener("click", () => openModal("formModal"));
+document.querySelectorAll("[data-info-modal]").forEach(btn => {
+  btn.addEventListener("click", () => openModal(btn.dataset.infoModal));
+});
+
+const hamburgerBtn = document.getElementById("hamburgerBtn");
+const headerDropdown = document.getElementById("headerDropdown");
+
+function closeHeaderDropdown() {
+  headerDropdown.hidden = true;
+  hamburgerBtn.setAttribute("aria-expanded", "false");
+}
+
+hamburgerBtn.addEventListener("click", (e) => {
+  e.stopPropagation();
+  const isOpen = !headerDropdown.hidden;
+  if (isOpen) {
+    closeHeaderDropdown();
+  } else {
+    headerDropdown.hidden = false;
+    hamburgerBtn.setAttribute("aria-expanded", "true");
+  }
+});
+
+// Any menu item click both opens its modal (handled above) and closes the dropdown.
+headerDropdown.querySelectorAll("button").forEach(btn => {
+  btn.addEventListener("click", closeHeaderDropdown);
+});
+
+document.addEventListener("click", (e) => {
+  if (!headerDropdown.hidden && !headerDropdown.contains(e.target)) {
+    closeHeaderDropdown();
+  }
+});
+
+window.addEventListener("load", () => {
+  if (localStorage.getItem("cheapster_welcome_seen") !== "1") {
+    setTimeout(() => openModal("welcomeModal"), 800);
+  }
+});
+
+document.getElementById("continueBtn").addEventListener("click", () => {
+  localStorage.setItem("cheapster_welcome_seen", "1");
+  closeModal("welcomeModal");
+});
+
+// ---------- Google login (Firebase Auth) ----------
+
+const authBtn = document.getElementById("authBtn");
+const authBtnText = document.getElementById("authBtnText");
+let currentUser = null;
+
+if (window.auth) {
+  authBtn.addEventListener("click", () => {
+    if (currentUser) {
+      window.auth.signOut();
+    } else {
+      window.auth.signInWithPopup(window.googleProvider).catch((err) => {
+        console.error("Google sign-in (popup) failed:", err.code, err.message);
+        // Popups are silently blocked in a lot of mobile browsers and in
+        // almost every in-app browser (Instagram/WhatsApp/Facebook webviews).
+        // When that happens, fall back to a full-page redirect flow instead
+        // of just failing — this is what makes login actually work on phones.
+        if (
+          err.code === "auth/popup-blocked" ||
+          err.code === "auth/operation-not-supported-in-this-environment" ||
+          err.code === "auth/popup-closed-by-user" ||
+          err.code === "auth/cancelled-popup-request"
+        ) {
+          window.auth.signInWithRedirect(window.googleProvider);
+        } else if (err.code === "auth/unauthorized-domain") {
+          alert("This domain isn't authorized for login yet (Firebase Console → Authentication → Settings → Authorized domains).");
+        } else {
+          alert("Login failed, please try again.");
+        }
+      });
+    }
+  });
+
+  // Catches the user coming back after signInWithRedirect above.
+  window.auth.getRedirectResult().catch((err) => {
+    if (err) console.error("Google sign-in (redirect) failed:", err.code, err.message);
+  });
+
+  window.auth.onAuthStateChanged((user) => {
+    currentUser = user;
+    if (user) {
+      authBtnText.textContent = user.displayName ? user.displayName.split(" ")[0] : "Logout";
+      authBtn.title = "Logout";
+      const nameField = document.getElementById("fullName");
+      if (nameField && !nameField.value) nameField.value = user.displayName || "";
+    } else {
+      authBtnText.textContent = "Login";
+      authBtn.title = "Login with Google";
+    }
+  });
+} else {
+  // firebase-config.js didn't load / isn't set up yet — don't leave the
+  // button silently doing nothing; tell whoever's testing the site why.
+  authBtn.addEventListener("click", () => alert("Login isn't configured yet."));
+}
+
+// ---------- reward form → Google Sheet ----------
+
+// Paste your deployed Google Apps Script Web App URL here (see setup notes).
+const SHEET_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbziQvJq8kqk-CAHRekAHjkSVEJkQmbBp84girc4vjfTPbY20VJl2hz_I-OC-bWBcjQf/exec";
+
+document.getElementById("rewardForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  if (!currentUser) {
+    alert("Please login with Google first, then submit your entry.");
+    return;
+  }
+
+  const submitBtn = document.getElementById("submitRewardBtn");
+  const payload = {
+    fullName: document.getElementById("fullName").value,
+    whatsapp: document.getElementById("whatsapp").value,
+    brand: document.getElementById("brandSelect").value,
+    email: currentUser.email || "",
+    uid: currentUser.uid || "",
+    submittedAt: new Date().toISOString()
+  };
+
+  submitBtn.disabled = true;
+  submitBtn.textContent = "Submitting...";
+
+  try {
+    // mode: "no-cors" is required here — Apps Script Web Apps respond via a
+    // redirect to a googleusercontent.com URL that doesn't send CORS
+    // headers, so a normal fetch() throws a network error even when the
+    // row was written successfully. We don't need to read the response
+    // (we show our own success view), so we just fire the request and
+    // stop the browser from trying to read a response we don't need.
+    await fetch(SHEET_WEBAPP_URL, {
+      method: "POST",
+      mode: "no-cors",
+      body: new URLSearchParams(payload)
+    });
+    document.getElementById("rewardForm").hidden = true;
+    document.getElementById("successView").hidden = false;
+  } catch (err) {
+    console.error("Sheet submission failed:", err);
+    alert("Something went wrong submitting your entry. Please try again.");
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.textContent = "Submit Entry";
+  }
+});
+
+document.getElementById("contactForm").addEventListener("submit", (e) => {
+  e.preventDefault();
+  const name = document.getElementById("contactName").value;
+  const issue = document.getElementById("contactIssueText").value;
+  const message = document.getElementById("contactMessage").value;
+
+  const text = encodeURIComponent(`Hi Cheapster Support,\nMy Name: ${name}\nIssue: ${issue}\n\nMessage:\n${message}`);
+  openStoreLink({ link: `https://wa.me/919999999999?text=${text}` }); // TODO: replace with your real WhatsApp business number
+});
+
+// ---------- premium touches: header shadow + scroll reveal ----------
+
+const header = document.getElementById("siteHeader");
+if (header) {
+  let ticking = false;
+  window.addEventListener("scroll", () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => {
+      header.classList.toggle("is-scrolled", window.scrollY > 12);
+      ticking = false;
+    });
+  }, { passive: true });
+}
+
+// Sections render fully visible by default (see CSS). Only once we know
+// IntersectionObserver works do we "arm" them for the hide-then-reveal
+// effect — this way the animation can only ever add polish, never hide
+// content if something about the browser or device doesn't cooperate.
+//
+// threshold was previously 0.15 (15% of the *whole* target visible at
+// once). For a short target that's fine, but .directory-section holds
+// all 77 brand cards and is many screens tall — on phones, 15% of that
+// total height often never becomes visible at once (viewport is small,
+// browser chrome resizes it further), so the section could sit at
+// opacity:0 far longer than expected, making cards look broken/unopenable
+// even though they were really just invisible. Now: reveal as soon as
+// the section starts entering the viewport (threshold 0, rootMargin
+// pulls the trigger point up a little), AND a hard timeout forces
+// visibility regardless — so this can never get stuck invisible again.
+const revealTargets = document.querySelectorAll(".reveal-on-scroll");
+if (revealTargets.length && "IntersectionObserver" in window) {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("in-view");
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0, rootMargin: "0px 0px -10% 0px" });
+  revealTargets.forEach(el => {
+    el.classList.add("reveal-armed");
+    observer.observe(el);
+    setTimeout(() => el.classList.add("in-view"), 1500); // failsafe
+  });
+}
+
+// ---------- init ----------
+
+renderStores(stores);
+if (document.getElementById("currentYear")) {
+  document.getElementById("currentYear").textContent = new Date().getFullYear();
 }
